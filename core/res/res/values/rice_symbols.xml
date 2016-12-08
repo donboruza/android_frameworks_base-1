@@ -163,4 +163,7 @@
     <!-- Delay that allows some content to arrive at the display before switching
          from DOZE to ON, in millis. -->
   <java-symbol type="integer" name="config_wakeUpDelayDoze" />
+
+    <!-- Whether doze feature is enabled by default in settings -->
+    <java-symbol type="bool" name="config_doze_enabled_by_default" />
 </resources>

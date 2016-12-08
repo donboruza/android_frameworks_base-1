@@ -250,4 +250,7 @@
     <!-- Delay that allows some content to arrive at the display before switching
          from DOZE to ON, in millis. -->
   <integer name="config_wakeUpDelayDoze">0</integer>
+
+    <!-- Whether doze feature is enabled by default in settings -->
+    <bool name="config_doze_enabled_by_default">false</bool>
 </resources>

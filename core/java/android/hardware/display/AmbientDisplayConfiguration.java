@@ -44,6 +44,7 @@ public class AmbientDisplayConfiguration {
 
     private final Context mContext;
     private final boolean mAlwaysOnByDefault;
+    private final boolean mDozeEnabledByDefault;
 
     /** Copied from android.provider.Settings.Secure since these keys are hidden. */
     private static final String[] DOZE_SETTINGS = {
@@ -70,6 +71,7 @@ public class AmbientDisplayConfiguration {
     public AmbientDisplayConfiguration(Context context) {
         mContext = context;
         mAlwaysOnByDefault = mContext.getResources().getBoolean(R.bool.config_dozeAlwaysOnEnabled);
+        mDozeEnabledByDefault = mContext.getResources().getBoolean(R.bool.config_doze_enabled_by_default);
     }
 
     /** @hide */
@@ -90,7 +92,7 @@ public class AmbientDisplayConfiguration {
 
     /** @hide */
     public boolean pulseOnNotificationEnabled(int user) {
-        return boolSettingDefaultOn(Settings.Secure.DOZE_ENABLED, user)
+        return boolSetting(Settings.Secure.DOZE_ENABLED, user, mDozeEnabledByDefault ? 1 : 0)
                 && pulseOnNotificationAvailable();
     }
 
