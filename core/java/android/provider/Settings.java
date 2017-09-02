@@ -12063,6 +12063,20 @@ public final class Settings {
         @Readable
         public static final String SCARLET_AGGRESSIVE_IDLE_MODE_TRIGGER = "scarlet_aggressive_idle_mode_trigger";
  
+         /**
+         * Scarlet System Manager will automatically block alarm services
+         * @hide
+         */
+        @Readable
+        public static final String SCARLET_AGGRESSIVE_IDLE_MODE_ALARM_BLOCKER = "scarlet_aggressive_idle_mode_alarm_blocker";
+        
+        /**
+         * Scarlet System Manager will automatically block wakelocks
+         * @hide
+         */
+        @Readable
+        public static final String SCARLET_AGGRESSIVE_IDLE_MODE_WAKELOCK_BLOCKER = "scarlet_aggressive_idle_mode_wakelock_blocker";
+
         /**
          * Scarlet System Manager will automatically disable wifi
          * @hide

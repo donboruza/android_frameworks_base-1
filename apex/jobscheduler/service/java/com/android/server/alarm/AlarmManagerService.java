@@ -169,6 +169,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -308,6 +310,9 @@ public class AlarmManagerService extends SystemService {
      * At boot we use SYSTEM_UI_SELF_PERMISSION to look up the definer's uid.
      */
     int mSystemUiUid;
+    private Set<String> mSeenAlarms = new HashSet<String>();
+    private int mScarletAggEnabled;
+    private int mScarletAlarmBlocker;
 
     static boolean isTimeTickAlarm(Alarm a) {
         return a.uid == Process.SYSTEM_UID && TIME_TICK_TAG.equals(a.listenerTag);
@@ -871,6 +876,32 @@ public class AlarmManagerService extends SystemService {
             economyManagerInternal.registerTareStateChangeListener(this);
             onPropertiesChanged(DeviceConfig.getProperties(DeviceConfig.NAMESPACE_ALARM_MANAGER));
             updateTareSettings(economyManagerInternal.isEnabled());
+            getContext().getContentResolver().registerContentObserver(
+                    Settings.Secure.getUriFor(Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE),
+                    false,
+                    new ContentObserver(mHandler) {
+                        @Override
+                        public void onChange(boolean selfChange) {
+                            super.onChange(selfChange);
+                            mScarletAggEnabled = Settings.Secure.getInt(
+                                    getContext().getContentResolver(),
+                                    Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE, 0);
+                        }
+                    }
+            );
+            getContext().getContentResolver().registerContentObserver(
+                    Settings.Secure.getUriFor(Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_ALARM_BLOCKER),
+                    false,
+                    new ContentObserver(mHandler) {
+                        @Override
+                        public void onChange(boolean selfChange) {
+                            super.onChange(selfChange);
+                            mScarletAlarmBlocker = Settings.Secure.getInt(
+                                    getContext().getContentResolver(),
+                                    Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_ALARM_BLOCKER, 0);
+                        }
+                    }
+            );
         }
 
         public void updateAllowWhileIdleWhitelistDurationLocked() {
@@ -1046,6 +1077,12 @@ public class AlarmManagerService extends SystemService {
                             break;
                     }
                 }
+                mScarletAggEnabled = Settings.Secure.getInt(
+                        getContext().getContentResolver(),
+                        Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE, 0);
+                mScarletAlarmBlocker = Settings.Secure.getInt(
+                        getContext().getContentResolver(),
+                        Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_ALARM_BLOCKER, 0);
             }
         }
 
@@ -2287,6 +2324,37 @@ public class AlarmManagerService extends SystemService {
             }
             maxElapsed = triggerElapsed + windowLength;
         }
+
+        boolean blockAlarm = false;
+        if (operation != null) {
+            String tag = operation.getTag("");
+
+            if (type == AlarmManager.RTC_WAKEUP || type == AlarmManager.ELAPSED_REALTIME_WAKEUP){
+
+                if (tag.toLowerCase().contains("context_manager_alarm_wakeup")){
+                    tag = tag.substring(0,28);
+                } else if (tag.toLowerCase().contains("alarm_action")){
+                    tag = tag.substring(0,12);
+                } else if (tag.toLowerCase().contains("thread")){
+                    tag = tag.substring(0,6);
+                }
+
+                //Slog.e(TAG, "RTC Alarm: " + type + " " + listenerTag + " " + callingPackage + " " + tag);
+
+                if (!mSeenAlarms.contains(tag)) {
+                    mSeenAlarms.add(tag);
+                }
+                if (mScarletAggEnabled == 1 && mScarletAlarmBlocker == 1) {
+                        if (type == AlarmManager.RTC_WAKEUP) {
+                            type = AlarmManager.RTC;
+                        } else {
+                            type = AlarmManager.ELAPSED_REALTIME;
+                        }
+                    blockAlarm = true;
+                }
+            }
+        }
+
         synchronized (mLock) {
             if (DEBUG_BATCH) {
                 Slog.v(TAG, "set(" + operation + ") : type=" + type
@@ -3013,6 +3081,23 @@ public class AlarmManagerService extends SystemService {
         @Override
         public long getNextWakeFromIdleTime() {
             return getNextWakeFromIdleTimeImpl();
+        }
+
+        @Override
+        public String getSeenAlarms() {
+            StringBuffer buffer = new StringBuffer();
+            Iterator<String> nextAlarm = mSeenAlarms.iterator();
+
+            while (nextAlarm.hasNext()) {
+                String alarmTag = nextAlarm.next();
+                buffer.append(alarmTag + "|");
+            }
+
+            if (buffer.length() > 0) {
+                buffer.deleteCharAt(buffer.length() - 1);
+            }
+
+            return buffer.toString();
         }
 
         @Override
