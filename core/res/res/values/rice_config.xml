@@ -276,4 +276,7 @@
       <item>com.gaana</item>
       <item>com.facebook.katana.LoginActivity</item>
   </string-array>
+  
+    <!-- Whether device supports gestures on fingerprint sensor -->
+    <bool name="config_supportsGesturesOnFingerprintSensor">false</bool>
 </resources>
