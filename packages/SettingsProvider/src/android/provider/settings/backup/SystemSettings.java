@@ -102,6 +102,6 @@ public class SystemSettings {
         Settings.System.STATUS_BAR_LOGO_STYLE,
         Settings.System.QS_SYSTEM_INFO,
         Settings.System.SENSOR_BLOCK,
-        Settings.System.RINGTONE_VIBRATION_PATTERN
+        Settings.System.CUSTOM_RINGTONE_VIBRATION_PATTERN
     };
 }
