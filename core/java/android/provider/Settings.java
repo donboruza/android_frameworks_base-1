@@ -11708,6 +11708,12 @@ public final class Settings {
                 "device_state_rotation_lock";
 
         /**
+         * Face Unlock Method
+         * @hide
+         */
+        public static final String FACE_UNLOCK_METHOD = "face_unlock_method";
+
+        /**
          * Gesture navbar length mode.
          * Supported modes: 0 for hidden, 1 for normal length, 2 for medium and 3 for long.
          * Default 0.
