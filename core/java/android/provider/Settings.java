@@ -6202,6 +6202,13 @@ public final class Settings {
         public static final String FLASHLIGHT_ON_CALL_IGNORE_DND = "flashlight_on_call_ignore_dnd";
 
         /**
+         * Scarlet Idle Assistant Manager
+         * @hide
+         */
+        @Readable
+        public static final String SCARLET_IDLE_ASSISTANT_MANAGER = "scarlet_idle_assistant_manager";
+
+        /**
          * Rate in Hz in which to blink flashlight_on_call
          * @hide
          */
