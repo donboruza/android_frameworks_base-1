@@ -190,4 +190,7 @@
   
   <!-- Whether device supports gestures on fingerprint sensor -->
   <java-symbol type="bool" name="config_supportsGesturesOnFingerprintSensor" />
+  
+    <!-- Whether to force enable multi resolution configuration for camera -->
+    <java-symbol type="bool" name="config_forceMultiResolution" />
 </resources>
