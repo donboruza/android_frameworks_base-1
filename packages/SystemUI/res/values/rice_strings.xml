@@ -64,6 +64,7 @@
 
     <!-- Name of the VoLTE/VoWiFi icon. -->
     <string name="status_bar_ims">VoLTE/VoWiFi</string>
+    <string name="status_bar_firewall">Firewall</string>
 
     <!-- Sb Call Strength icon -->
     <string name="status_bar_call_strength">Call strength</string>
