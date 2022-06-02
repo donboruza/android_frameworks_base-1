@@ -68,4 +68,7 @@
     <string name="notification_channel_scarlet">Scarlet Services</string>
     <string name="scarlet_notification_title">Scarlet Idle Services active</string>
     <string name="scarlet_aggressive_mode">Scarlet services will aggresively optimize device usage while device is idle...</string>
+
+    <!-- Lock gesture -->
+    <string name="gesture_locked_warning">Swipe again to unlock gestures</string>
 </resources>

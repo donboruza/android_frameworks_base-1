@@ -185,4 +185,6 @@
   <java-symbol type="string" name="scarlet_notification_title" />
   <java-symbol type="string" name="scarlet_aggressive_mode" />
 
+  <!-- Lock gesture -->
+  <java-symbol type="string" name="gesture_locked_warning" />
 </resources>
