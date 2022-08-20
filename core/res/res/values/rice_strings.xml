@@ -75,4 +75,7 @@
     <!-- System Reboot -->
     <string name="system_restart_title">Soft reboot required</string>
     <string name="system_restart_message">For all the changes to take effect, a soft reboot is required. Perform a soft reboot now?</string>
+    
+    <!-- Parallel space badge -->
+    <string name="parallel_space_badge_label">%1$s</string>
 </resources>
