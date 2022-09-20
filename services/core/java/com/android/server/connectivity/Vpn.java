@@ -3782,8 +3782,6 @@ public class Vpn {
      */
     @NonNull
     public synchronized List<String> getAppExclusionList(@NonNull String packageName) {
-        enforceNotRestrictedUser();
-
         final long oldId = Binder.clearCallingIdentity();
         try {
             final byte[] bytes = getVpnProfileStore().get(getVpnAppExcludedForPackage(packageName));
