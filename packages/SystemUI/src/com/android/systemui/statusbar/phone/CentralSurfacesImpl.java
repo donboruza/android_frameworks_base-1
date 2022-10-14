@@ -948,7 +948,6 @@ public class CentralSurfacesImpl extends CoreStartable implements
         mActivityIntentHelper = new ActivityIntentHelper(mContext);
         mActivityLaunchAnimator = activityLaunchAnimator;
         mGameSpaceManager = new GameSpaceManager(mContext, mKeyguardStateController);
-
         mCustomSettingsObserver = new CustomSettingsObserver(backgroundHandler);
 
         // The status bar background may need updating when the ongoing call status changes.
@@ -2187,6 +2186,7 @@ public class CentralSurfacesImpl extends CoreStartable implements
             mSystemSettings.registerContentObserverForUser(Settings.System.STATUS_BAR_BRIGHTNESS_CONTROL, this, UserHandle.USER_ALL);
             mSystemSettings.registerContentObserverForUser(Settings.System.RETICKER_STATUS, this, UserHandle.USER_ALL);
             mSystemSettings.registerContentObserverForUser(Settings.System.QS_SYSTEM_INFO, this, UserHandle.USER_ALL);
+            mSystemSettings.registerContentObserverForUser(Settings.System.QS_SYSTEM_INFO_ICON, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -2202,6 +2202,9 @@ public class CentralSurfacesImpl extends CoreStartable implements
                     setUseLessBoringHeadsUp();
                     break;
                 case Settings.System.QS_SYSTEM_INFO:
+                    updateQSSystemInfo();
+                    break;
+                case Settings.System.QS_SYSTEM_INFO_ICON:
                     updateQSSystemInfo();
                     break;
             }

@@ -5739,6 +5739,12 @@ public final class Settings {
         public static final String QS_BATTERY_LOCATION = "qs_battery_location";
 
         /**
+         * Shows system info icon
+         * @hide
+         */
+        public static final String QS_SYSTEM_INFO_ICON = "qs_system_info_icon";
+
+        /**
          * @hide
          */
         public static final String UDFPS_ANIM = "udfps_anim";
