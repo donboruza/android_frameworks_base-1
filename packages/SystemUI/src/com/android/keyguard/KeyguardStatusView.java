@@ -93,7 +93,7 @@ public class KeyguardStatusView extends GridLayout {
 
     public void onThemeChanged() {
         int customClockFont = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                Settings.Secure.KG_CUSTOM_DATE_FONT , 23, UserHandle.USER_CURRENT);
+                Settings.Secure.KG_CUSTOM_DATE_FONT , 0, UserHandle.USER_CURRENT);
         
         switch (customClockFont) {
         	case 0:
@@ -505,10 +505,10 @@ public class KeyguardStatusView extends GridLayout {
         	break;
         	
         }
-        mKeyguardWeather.setTextSize(18.0f);
-        mKeyguardSlice.setViewsTextSize(18.0f);
+        mKeyguardWeather.setTextSize(16.0f);
+        mKeyguardSlice.setViewsTextSize(16.0f);
         if (mSliceTitle != null) {
-           mSliceTitle.setTextSize(18.0f);
+           mSliceTitle.setTextSize(16.0f);
         }
     }
     
