@@ -6151,18 +6151,6 @@ public final class Settings {
         public static final String RECENTS_LOCKED_TASKS = "recents_locked_tasks";
 
         /**
-         * Whether to add left padding on statusbar
-         * @hide
-         */
-        public static final String LEFT_PADDING = "statusbar_left_padding";
-
-        /**
-         * Whether to add right padding on statusbar
-         * @hide
-         */
-        public static final String RIGHT_PADDING = "statusbar_right_padding";
-
-        /**
          * Whether to show IME space
          * @hide
          */

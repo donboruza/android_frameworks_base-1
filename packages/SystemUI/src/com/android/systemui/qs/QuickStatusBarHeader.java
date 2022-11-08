@@ -32,7 +32,6 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.AlarmClock;
 import android.provider.CalendarContract;
-import android.util.TypedValue;
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.DisplayCutout;
@@ -92,11 +91,6 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
             "system:" + Settings.System.QS_SHOW_BATTERY_PERCENT;
     private static final String QS_SHOW_BATTERY_ESTIMATE =
             "system:" + Settings.System.QS_SHOW_BATTERY_ESTIMATE;
-
-    private static final String LEFT_PADDING =
-            "system:" + Settings.System.LEFT_PADDING;
-    private static final String RIGHT_PADDING =
-            "system:" + Settings.System.RIGHT_PADDING;
 
     private final Handler mHandler = new Handler();
     public static final String QS_SHOW_INFO_HEADER = "qs_show_info_header";
@@ -158,14 +152,6 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
 
     private int mRoundedCornerPadding = 0;
     private int mStatusBarPaddingTop;
-    private int mStatusBarPaddingStart;
-    private int mStatusBarPaddingEnd;
-    private int mLeftPad;
-    private int mRightPad;
-    private int qsPaddingStartRes;
-    private int qsPaddingEndRes;
-    private int mHeaderPaddingLeft;
-    private int mHeaderPaddingRight;
     private int mWaterfallTopInset;
     private int mCutOutPaddingLeft;
     private int mCutOutPaddingRight;
@@ -176,9 +162,6 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
     @NonNull
     private List<String> mRssiIgnoredSlots = List.of();
     private boolean mIsSingleCarrier;
-
-    private boolean mHasLeftCutout;
-    private boolean mHasRightCutout;
 
     private boolean mUseCombinedQSHeader;
 
@@ -264,9 +247,7 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
                 QS_BATTERY_STYLE,
                 QS_BATTERY_LOCATION,
                 QS_SHOW_BATTERY_PERCENT,
-                QS_SHOW_BATTERY_ESTIMATE,
-                LEFT_PADDING,
-                RIGHT_PADDING);
+                QS_SHOW_BATTERY_ESTIMATE);
     }
 
     void onAttach(TintedIconManager iconManager,
@@ -520,18 +501,6 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
 
         int statusBarHeight = SystemBarUtils.getStatusBarHeight(mContext);
 
-	float density = resources.getSystem().getDisplayMetrics().density;
-
-        mStatusBarPaddingStart = resources.getDimensionPixelSize(
-                R.dimen.status_bar_padding_start);
-        mStatusBarPaddingEnd = resources.getDimensionPixelSize(
-                R.dimen.status_bar_padding_end);
-
-        qsPaddingStartRes = (int) (mStatusBarPaddingStart / density);
-        qsPaddingEndRes = (int) (mStatusBarPaddingEnd / density);
-
-        int qsOffsetHeight = SystemBarUtils.getQuickQsOffsetHeight(mContext);
-
         mStatusBarPaddingTop = resources.getDimensionPixelSize(
                 R.dimen.status_bar_padding_top);
 
@@ -622,12 +591,6 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
                 .addFloat(mQsWeatherHeaderView, "alpha", 0, 0, 1)
                 .addFloat(mQsWeatherView, "alpha", 1, 0, 0)
                 .addFloat(mQSCarriers, "alpha", 0, 1)
-                // Use statusbar paddings when collapsed,
-                // align with QS when expanded, and animate translation
-                .addFloat(isLayoutRtl() ? mRightLayout : mClockContainer, "translationX",
-                    mHeaderPaddingLeft + (int) mLeftPad, 0)
-                .addFloat(isLayoutRtl() ? mClockContainer: mRightLayout, "translationX",
-                    -(mHeaderPaddingRight + (int) mRightPad), 0)
                 .setListener(new TouchAnimator.ListenerAdapter() {
                     @Override
                     public void onAnimationAtEnd() {
@@ -742,6 +705,8 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
                 .getStatusBarContentInsetsForCurrentRotation();
         boolean hasCornerCutout = mInsetsProvider.currentRotationHasCornerCutout();
 
+        mDatePrivacyView.setPadding(sbInsets.first, 0, sbInsets.second, 0);
+        mStatusIconsView.setPadding(sbInsets.first, 0, sbInsets.second, 0);
         LinearLayout.LayoutParams datePrivacySeparatorLayoutParams =
                 (LinearLayout.LayoutParams) mDatePrivacySeparator.getLayoutParams();
         LinearLayout.LayoutParams mClockIconsSeparatorLayoutParams =
@@ -754,20 +719,12 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
                 mClockIconsSeparatorLayoutParams.width = 0;
                 setSeparatorVisibility(false);
                 mShowClockIconsSeparator = false;
-                if (sbInsets.first != 0) {
-                    mHasLeftCutout = true;
-                }
-                if (sbInsets.second != 0) {
-                    mHasRightCutout = true;
-                }
             } else {
                 datePrivacySeparatorLayoutParams.width = topCutout.width();
                 mDatePrivacySeparator.setVisibility(View.VISIBLE);
                 mClockIconsSeparatorLayoutParams.width = topCutout.width();
                 mShowClockIconsSeparator = true;
                 setSeparatorVisibility(mKeyguardExpansionFraction == 0f);
-                mHasLeftCutout = false;
-                mHasRightCutout = false;
             }
         }
         mDatePrivacySeparator.setLayoutParams(datePrivacySeparatorLayoutParams);
@@ -810,38 +767,34 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
     private void updateHeadersPadding() {
         setContentMargins(mDatePrivacyView, 0, 0);
         setContentMargins(mStatusIconsView, 0, 0);
+        int paddingLeft = 0;
+        int paddingRight = 0;
 
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) getLayoutParams();
-        // Note: these are supposedly notification_side_paddings
         int leftMargin = lp.leftMargin;
         int rightMargin = lp.rightMargin;
 
         // The clock might collide with cutouts, let's shift it out of the way.
-        // Margin will be the reference point of paddings/translations
-        // and will have to be subtracted from cutout paddings
-        boolean headerPaddingUpdated = false;
-        int headerPaddingLeft = Math.max(mCutOutPaddingLeft, mRoundedCornerPadding) - leftMargin;
-        if (headerPaddingLeft != mHeaderPaddingLeft) {
-            mHeaderPaddingLeft = headerPaddingLeft;
-            headerPaddingUpdated = true;
+        // We only do that if the inset is bigger than our own padding, since it's nicer to
+        // align with
+        if (mCutOutPaddingLeft > 0) {
+            // if there's a cutout, let's use at least the rounded corner inset
+            int cutoutPadding = Math.max(mCutOutPaddingLeft, mRoundedCornerPadding);
+            paddingLeft = Math.max(cutoutPadding - leftMargin, 0);
         }
-        int headerPaddingRight = Math.max(mCutOutPaddingRight, mRoundedCornerPadding) - rightMargin;
-        if (headerPaddingRight != mHeaderPaddingRight) {
-            mHeaderPaddingRight = headerPaddingRight;
-            headerPaddingUpdated = true;
+        if (mCutOutPaddingRight > 0) {
+            // if there's a cutout, let's use at least the rounded corner inset
+            int cutoutPadding = Math.max(mCutOutPaddingRight, mRoundedCornerPadding);
+            paddingRight = Math.max(cutoutPadding - rightMargin, 0);
         }
 
-        // Update header animator with new paddings
-        if (headerPaddingUpdated) {
-            updateAnimators();
-        }
-        mDatePrivacyView.setPadding(mHeaderPaddingLeft + (int) mLeftPad,
+        mDatePrivacyView.setPadding(paddingLeft,
                 mStatusBarPaddingTop,
-                mHeaderPaddingRight + (int) mRightPad,
+                paddingRight,
                 0);
-        mStatusIconsView.setPadding(0,
+        mStatusIconsView.setPadding(paddingLeft,
                 mStatusBarPaddingTop,
-                0,
+                paddingRight,
                 0);
     }
 
@@ -946,22 +899,6 @@ public class QuickStatusBarHeader extends FrameLayout implements TunerService.Tu
                 mBatteryIcon.setBatteryEstimate(
                         TunerService.parseInteger(newValue, 0));
                 setChipVisibility(mPrivacyChip.getVisibility() == View.VISIBLE);
-                break;
-            case LEFT_PADDING:
-                int mLPadding = TunerService.parseInteger(newValue, qsPaddingStartRes);
-            	mLeftPad = Math.round(TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, mLPadding,
-                getResources().getDisplayMetrics()));
-            	updateHeadersPadding();
-            	updateAlphaAnimator();
-                break;
-            case RIGHT_PADDING:
-                int mRPadding = TunerService.parseInteger(newValue, qsPaddingEndRes);
-                mRightPad = Math.round(TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, mRPadding,
-                getResources().getDisplayMetrics()));
-            	updateHeadersPadding();
-            	updateAlphaAnimator();
                 break;
             default:
                 break;

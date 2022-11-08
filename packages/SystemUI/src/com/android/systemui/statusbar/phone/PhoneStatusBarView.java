@@ -19,9 +19,6 @@ package com.android.systemui.statusbar.phone;
 
 import android.annotation.Nullable;
 import android.content.Context;
-import android.content.pm.IPackageManager;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.content.res.Configuration;
 import android.graphics.Rect;
@@ -56,28 +53,17 @@ import com.android.systemui.shared.rotation.RotationButtonController;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.CommandQueue.Callbacks;
 import com.android.systemui.util.leak.RotationUtils;
-import android.util.TypedValue;
-import com.android.systemui.tuner.TunerService;
-import android.provider.Settings;
 
 import java.util.Objects;
 
-public class PhoneStatusBarView extends FrameLayout implements Callbacks, TunerService.Tunable {
+public class PhoneStatusBarView extends FrameLayout implements Callbacks {
     private static final String TAG = "PhoneStatusBarView";
     private final CommandQueue mCommandQueue;
-
-    private static final String LEFT_PADDING =
-            "system:" + Settings.System.LEFT_PADDING;
-    private static final String RIGHT_PADDING =
-            "system:" + Settings.System.RIGHT_PADDING;
-
     private final StatusBarContentInsetsProvider mContentInsetsProvider;
 
     private int mBasePaddingBottom;
-    private int mLeftPad;
-    private int mRightPad;
-    private int sbPaddingStartRes;
-    private int sbPaddingEndRes;
+    private int mBasePaddingLeft;
+    private int mBasePaddingRight;
     private int mBasePaddingTop;
 
     private ViewGroup mStatusBarContents;
@@ -159,9 +145,9 @@ public class PhoneStatusBarView extends FrameLayout implements Callbacks, TunerS
             return;
         }
 
-        mStatusBarContents.setPaddingRelative(mLeftPad + horizontalShift,
+        mStatusBarContents.setPaddingRelative(mBasePaddingLeft + horizontalShift,
                 mBasePaddingTop + verticalShift,
-                mRightPad + horizontalShift,
+                mBasePaddingRight + horizontalShift,
                 mBasePaddingBottom - verticalShift);
         invalidate();
     }
@@ -175,10 +161,10 @@ public class PhoneStatusBarView extends FrameLayout implements Callbacks, TunerS
 
         mStatusBarContents = (ViewGroup) findViewById(R.id.status_bar_contents);
 
+        mBasePaddingLeft = mStatusBarContents.getPaddingStart();
         mBasePaddingTop = mStatusBarContents.getPaddingTop();
+        mBasePaddingRight = mStatusBarContents.getPaddingEnd();
         mBasePaddingBottom = mStatusBarContents.getPaddingBottom();
-		Dependency.get(TunerService.class).addTunable(this,
-                LEFT_PADDING, RIGHT_PADDING);
 
         updateResources();
     }
@@ -216,9 +202,9 @@ public class PhoneStatusBarView extends FrameLayout implements Callbacks, TunerS
 
         mStatusBarContents = (ViewGroup) findViewById(R.id.status_bar_contents);
 
-        mLeftPad = mStatusBarContents.getPaddingStart();
-        mRightPad = mStatusBarContents.getPaddingEnd();
+        mBasePaddingLeft = mStatusBarContents.getPaddingStart();
         mBasePaddingTop = mStatusBarContents.getPaddingTop();
+        mBasePaddingRight = mStatusBarContents.getPaddingEnd();
         mBasePaddingBottom = mStatusBarContents.getPaddingBottom();
 
         updateResources();
@@ -325,32 +311,22 @@ public class PhoneStatusBarView extends FrameLayout implements Callbacks, TunerS
         mStatusBarHeight = SystemBarUtils.getStatusBarHeight(mContext);
         layoutParams.height = mStatusBarHeight - waterfallTopInset;
 
-        float density = Resources.getSystem().getDisplayMetrics().density;
-        Resources res = null;
-        try {
-            res = mContext.getPackageManager().getResourcesForApplication("com.android.systemui");
-        } catch (NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
         int statusBarPaddingTop = getResources().getDimensionPixelSize(
                 R.dimen.status_bar_padding_top);
         int statusBarPaddingStart = getResources().getDimensionPixelSize(
                 R.dimen.status_bar_padding_start);
         int statusBarPaddingEnd = getResources().getDimensionPixelSize(
                 R.dimen.status_bar_padding_end);
-        sbPaddingStartRes = (int) (statusBarPaddingStart / density);
-        sbPaddingEndRes = (int) (statusBarPaddingEnd / density);
 
         View sbContents = findViewById(R.id.status_bar_contents);
         sbContents.setPaddingRelative(
-                (int) mLeftPad,
+                statusBarPaddingStart,
                 statusBarPaddingTop,
-                (int) mRightPad,
+                statusBarPaddingEnd,
                 0);
 
         findViewById(R.id.notification_lights_out)
-                .setPaddingRelative(0, (int) mLeftPad, 0, 0);
+                .setPaddingRelative(0, statusBarPaddingStart, 0, 0);
 
         setLayoutParams(layoutParams);
     }
@@ -404,10 +380,6 @@ public class PhoneStatusBarView extends FrameLayout implements Callbacks, TunerS
                 winRotation == Surface.ROTATION_0 ? -insets.second : 0;
     }
 
-    public ClockController getClockController() {
-        return mClockController;
-    }
-
     /**
      * A handler responsible for all touch event handling on the status bar.
      *
@@ -432,20 +404,7 @@ public class PhoneStatusBarView extends FrameLayout implements Callbacks, TunerS
         boolean handleTouchEvent(MotionEvent event);
     }
 
-    @Override
-    public void onTuningChanged(String key, String newValue) {
-        if (LEFT_PADDING.equals(key)) {
-            int mLPadding = TunerService.parseInteger(newValue, sbPaddingStartRes);
-            mLeftPad = Math.round(TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, mLPadding,
-                getResources().getDisplayMetrics()));
-            updateStatusBarHeight();
-        } else if (RIGHT_PADDING.equals(key)) {
-            int mRPadding = TunerService.parseInteger(newValue, sbPaddingEndRes);
-            mRightPad = Math.round(TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, mRPadding,
-                getResources().getDisplayMetrics()));
-            updateStatusBarHeight();
-        }
+    public ClockController getClockController() {
+        return mClockController;
     }
 }
