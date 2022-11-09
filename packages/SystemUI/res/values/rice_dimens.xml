@@ -105,4 +105,6 @@
 
     <!-- Bluetooth dialog -->
     <dimen name="bluetooth_dialog_active_device_bottom_margin">4dp</dimen>
+    
+    <dimen name="smartspace_text_size">20sp</dimen>
 </resources>
