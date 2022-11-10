@@ -246,4 +246,8 @@
 
   <!-- Enable face auth only when swiping security view -->
   <bool name="config_faceAuthOnlyOnSecurityView">false</bool>
+
+    <!-- Delay that allows some content to arrive at the display before switching
+         from DOZE to ON, in millis. -->
+  <integer name="config_wakeUpDelayDoze">0</integer>
 </resources>

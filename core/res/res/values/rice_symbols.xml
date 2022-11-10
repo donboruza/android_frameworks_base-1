@@ -159,4 +159,8 @@
 
   <!-- Enable face auth only when swiping security view -->
   <java-symbol type="bool" name="config_faceAuthOnlyOnSecurityView" />
+  
+    <!-- Delay that allows some content to arrive at the display before switching
+         from DOZE to ON, in millis. -->
+  <java-symbol type="integer" name="config_wakeUpDelayDoze" />
 </resources>
