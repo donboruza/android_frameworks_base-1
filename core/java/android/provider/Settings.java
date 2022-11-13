@@ -11983,6 +11983,48 @@ public final class Settings {
         public static final String SLEEP_MODE_RINGER_MODE = "sleep_mode_ringer_mode";
 
         /**
+         * Scarlet Idle Assistant Manager Aggressive mode
+         * @hide
+         */
+        public static final String SCARLET_AGGRESSIVE_MODE = "scarlet_aggressive_mode";
+       
+        /**
+         * Scarlet Idle Assistant Manager Aggressive mode trigger/callback
+         * @hide
+         */
+        public static final String SCARLET_AGGRESSIVE_MODE_TRIGGER = "scarlet_aggressive_mode_trigger";
+ 
+        /**
+         * Scarlet Idle Assistant Manager will automatically disable wifi
+         * @hide
+         */
+        public static final String SCARLET_AGGRESSIVE_MODE_WIFI_TOGGLE = "scarlet_aggressive_mode_wifi_toggle";
+        
+        /**
+         * Scarlet Idle Assistant Manager will automatically disable bluetooth
+         * @hide
+         */
+        public static final String SCARLET_AGGRESSIVE_MODE_BLUETOOTH_TOGGLE = "scarlet_aggressive_mode_bluetooth_toggle";
+        
+        /**
+         * Scarlet Idle Assistant Manager will automatically disable data
+         * @hide
+         */
+        public static final String SCARLET_AGGRESSIVE_MODE_CELLULAR_TOGGLE = "scarlet_aggressive_mode_cellular_toggle";
+        
+        /**
+         * Scarlet Idle Assistant Manager will automatically disable location
+         * @hide
+         */
+        public static final String SCARLET_AGGRESSIVE_MODE_LOCATION_TOGGLE = "scarlet_aggressive_mode_location_toggle";
+        
+        /**
+         * Scarlet Idle Assistant Manager will automatically disable sensors
+         * @hide
+         */
+        public static final String SCARLET_AGGRESSIVE_MODE_SENSORS_TOGGLE = "scarlet_aggressive_mode_sensors_toggle";
+
+        /**
          * These entries are considered common between the personal and the managed profile,
          * since the managed profile doesn't get to change them.
          */

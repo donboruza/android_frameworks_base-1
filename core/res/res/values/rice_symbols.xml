@@ -182,4 +182,11 @@
   <java-symbol type="string" name="sleep_mode_notification_content" />
   <java-symbol type="string" name="sleep_mode_enabled_toast" />
   <java-symbol type="string" name="sleep_mode_disabled_toast" />
+  
+  <!-- Scarlet Services -->
+  <java-symbol type="drawable" name="ic_scarlet" />
+  <java-symbol type="string" name="notification_channel_scarlet" />
+  <java-symbol type="string" name="scarlet_notification_title" />
+  <java-symbol type="string" name="scarlet_aggressive_mode" />
+
 </resources>

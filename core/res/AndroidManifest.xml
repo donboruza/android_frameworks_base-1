@@ -826,6 +826,9 @@
 
     <!-- Sleep Mode -->
     <protected-broadcast android:name="android.intent.action.SLEEP_MODE_TURN_OFF" />
+    
+    <!-- Scarlet Services -->
+    <protected-broadcast android:name="android.intent.action.SCARLET_SERVICES" />  
 
     <!-- GameSpace -->
     <protected-broadcast android:name="io.chaldeaprjkt.gamespace.action.GAME_START" />

@@ -63,4 +63,9 @@
     <string name="sleep_mode_notification_content">Tap to turn off sleep mode</string>
     <string name="sleep_mode_enabled_toast">Sleep mode turned on</string>
     <string name="sleep_mode_disabled_toast">Sleep mode turned off</string>
+    
+    <!-- Scarlet Services -->
+    <string name="notification_channel_scarlet">Scarlet Services</string>
+    <string name="scarlet_notification_title">Scarlet Idle Services active</string>
+    <string name="scarlet_aggressive_mode">Scarlet services will aggresively optimize device usage while device is idle...</string>
 </resources>
