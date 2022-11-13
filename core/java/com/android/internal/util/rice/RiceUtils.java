@@ -41,7 +41,6 @@ import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.hardware.Sensor;
 import android.hardware.SensorPrivacyManager;
-import android.location.LocationManager;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.net.Uri;
@@ -171,7 +170,6 @@ public class RiceUtils {
         private NotificationManager mNotificationManager;
         private WifiManager mWifiManager;
         private SensorPrivacyManager mSensorPrivacyManager;
-        private LocationManager mLocationManager;
         private BluetoothAdapter mBluetoothAdapter;
         private int mSubscriptionId;
         private Toast mToast;
@@ -179,9 +177,9 @@ public class RiceUtils {
         private boolean mSleepModeEnabled;
 
         private static boolean mWifiState;
-        private static boolean mLocationState;
         private static boolean mCellularState;
         private static boolean mBluetoothState;
+        private static int mLocationState;
         private static int mRingerState;
         private static int mZenState;
 
@@ -195,7 +193,6 @@ public class RiceUtils {
             mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
             mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
             mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-            mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
             mSensorPrivacyManager = (SensorPrivacyManager) mContext.getSystemService(Context.SENSOR_PRIVACY_SERVICE);
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             mSubscriptionId = SubscriptionManager.INVALID_SUBSCRIPTION_ID;
@@ -250,25 +247,14 @@ public class RiceUtils {
             }
         }
 
-        private boolean isLocationEnabled() {
-            if (mLocationManager == null) {
-                mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-            }
-            try {
-                return mLocationManager.isLocationEnabledForUser(UserHandle.of(ActivityManager.getCurrentUser()));
-            } catch (Exception e) {
-                return false;
-            }
+        private int getLocationMode() {
+            return Settings.Secure.getIntForUser(mContext.getContentResolver(),
+                    Settings.Secure.LOCATION_MODE, Settings.Secure.LOCATION_MODE_OFF, UserHandle.USER_CURRENT);
         }
 
-        private void setLocationEnabled(boolean enable) {
-            if (mLocationManager == null) {
-                mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
-            }
-            try {
-                mLocationManager.setLocationEnabledForUser(enable, UserHandle.of(ActivityManager.getCurrentUser()));
-            } catch (Exception e) {
-            }
+        private void setLocationMode(int mode) {
+            Settings.Secure.putIntForUser(mContext.getContentResolver(),
+                    Settings.Secure.LOCATION_MODE, mode, UserHandle.USER_CURRENT);
         }
 
         private boolean isBluetoothEnabled() {
@@ -387,8 +373,8 @@ public class RiceUtils {
             final boolean disableLocation = Settings.Secure.getIntForUser(mContext.getContentResolver(),
                     Settings.Secure.SLEEP_MODE_LOCATION_TOGGLE, 1, UserHandle.USER_CURRENT) == 1;
             if (disableLocation) {
-                mLocationState = isLocationEnabled();
-                setLocationEnabled(false);
+                mLocationState = getLocationMode();
+                setLocationMode(Settings.Secure.LOCATION_MODE_OFF);
             }
 
             // Disable Sensors
@@ -447,8 +433,8 @@ public class RiceUtils {
             // Enable Location
             final boolean disableLocation = Settings.Secure.getIntForUser(mContext.getContentResolver(),
                     Settings.Secure.SLEEP_MODE_LOCATION_TOGGLE, 1, UserHandle.USER_CURRENT) == 1;
-            if (disableLocation && mLocationState != isLocationEnabled()) {
-                setLocationEnabled(mLocationState);
+            if (disableLocation && mLocationState != getLocationMode()) {
+                setLocationMode(mLocationState);
             }
 
             // Enable Sensors
