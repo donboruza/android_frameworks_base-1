@@ -528,6 +528,22 @@ public class KeyguardStatusView extends GridLayout {
         	mSliceTitle.setTypeface(geometossoftextrabold);
         	}
         	break;
+        	case 54:
+        	Typeface evolvesans = Typeface.create("evolvesans", Typeface.NORMAL);
+        	mKeyguardSlice.setViewsTypeface(evolvesans);
+        	mKeyguardWeather.setTypeface(evolvesans);
+        	if (mSliceTitle != null) {
+        	mSliceTitle.setTypeface(evolvesans);
+        	}
+        	break;
+        	case 55:
+        	Typeface evosans = Typeface.create("evosans", Typeface.NORMAL);
+        	mKeyguardSlice.setViewsTypeface(evosans);
+        	mKeyguardWeather.setTypeface(evosans);
+        	if (mSliceTitle != null) {
+        	mSliceTitle.setTypeface(evosans);
+        	}
+        	break;
         	default:
         	break;
         	

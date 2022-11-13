@@ -416,6 +416,16 @@ public class KeyguardClockSwitch extends RelativeLayout {
         	mClockView.setTypeface(geometossoftextrabold);
         	mLargeClockView.setTypeface(geometossoftextrabold);
         	break;
+        	case 54:
+        	Typeface evolvesans = Typeface.create("evolvesans", Typeface.NORMAL);
+        	mClockView.setTypeface(evolvesans);
+        	mLargeClockView.setTypeface(evolvesans);
+        	break;
+        	case 55:
+        	Typeface evosans = Typeface.create("evosans", Typeface.NORMAL);
+        	mClockView.setTypeface(evosans);
+        	mLargeClockView.setTypeface(evosans);
+        	break;
         	default:
         	break;
         	
