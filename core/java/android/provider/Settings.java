@@ -5850,11 +5850,6 @@ public final class Settings {
         public static final String DATA_DISABLED_ICON = "data_disabled_icon";
 
         /**
-         * @hide
-         */
-        public static final String EXTENDED_MONET_THEMES = "monet_themes_style";
-
-        /**
          * Navbar style
          * @hide
          */
@@ -11679,7 +11674,12 @@ public final class Settings {
          * @hide
          */
         public static final String PULSE_SMOOTHING_ENABLED = "pulse_smoothing_enabled";
-       
+ 
+         /**
+         * @hide
+         */
+        public static final String EXTENDED_MONET_THEMES = "monet_themes_style";
+      
         /**
          * @hide
          */
