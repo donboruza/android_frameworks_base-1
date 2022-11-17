@@ -629,6 +629,7 @@ public class ThemeOverlayController extends CoreStartable implements Dumpable {
                 },
                 UserHandle.USER_ALL);
 
+        // All wallpaper color and keyguard logic only applies when Monet is enabled.
         if (!mIsMonetEnabled) {
             return;
         }
@@ -637,11 +638,6 @@ public class ThemeOverlayController extends CoreStartable implements Dumpable {
 
         mConfigurationController.addCallback(mConfigurationListener);
         mDeviceProvisionedController.addCallback(mDeviceProvisionedListener);
-
-        // All wallpaper color and keyguard logic only applies when Monet is enabled.
-        if (!mIsMonetEnabled) {
-            return;
-        }
 
         // Upon boot, make sure we have the most up to date colors
         Runnable updateColors = () -> {
