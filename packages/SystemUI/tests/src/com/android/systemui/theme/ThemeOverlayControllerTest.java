@@ -58,7 +58,6 @@ import com.android.systemui.flags.FeatureFlags;
 import com.android.systemui.flags.Flags;
 import com.android.systemui.keyguard.WakefulnessLifecycle;
 import com.android.systemui.monet.ColorScheme;
-import com.android.systemui.monet.Style;
 import com.android.systemui.settings.UserTracker;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceProvisionedListener;
@@ -127,7 +126,6 @@ public class ThemeOverlayControllerTest extends SysuiTestCase {
     private ArgumentCaptor<UserTracker.Callback> mUserTrackerCallback;
     @Captor
     private ArgumentCaptor<ContentObserver> mSettingsObserver;
-    private Style mCurrentStyle;
 
     @Before
     public void setup() {
@@ -151,12 +149,11 @@ public class ThemeOverlayControllerTest extends SysuiTestCase {
                 mUserTracker, mDumpManager, mFeatureFlags, mResources, mWakefulnessLifecycle) {
             @Nullable
             @Override
-            protected FabricatedOverlay getOverlay(int color, int type, Style style) {
+            protected FabricatedOverlay getOverlay(int color, int type) {
                 FabricatedOverlay overlay = mock(FabricatedOverlay.class);
                 when(overlay.getIdentifier())
                         .thenReturn(new OverlayIdentifier(Integer.toHexString(color | 0xff000000)));
-                mCurrentStyle = style;
-                mColorScheme = new ColorScheme(color, false /* nightMode */, style);
+                mColorScheme = new ColorScheme(color, false /* nightMode */);
                 return overlay;
             }
         };
@@ -342,42 +339,6 @@ public class ThemeOverlayControllerTest extends SysuiTestCase {
 
         verify(mThemeOverlayApplier)
                 .applyCurrentUserOverlays(any(), any(), anyInt(), any());
-    }
-
-    @Test
-    public void onSettingChanged_honorThemeStyle() {
-        when(mDeviceProvisionedController.isUserSetup(anyInt())).thenReturn(true);
-        List<Style> validStyles = Arrays.asList(Style.EXPRESSIVE, Style.SPRITZ, Style.TONAL_SPOT,
-                Style.FRUIT_SALAD, Style.RAINBOW, Style.VIBRANT, Style.VIVID);
-        for (Style style : validStyles) {
-            reset(mSecureSettings);
-
-            String jsonString = "{\"android.theme.customization.system_palette\":\"A16B00\","
-                    + "\"android.theme.customization.theme_style\":\"" + style.name() + "\"}";
-
-            when(mSecureSettings.getStringForUser(
-                    eq(Settings.Secure.THEME_CUSTOMIZATION_OVERLAY_PACKAGES), anyInt()))
-                    .thenReturn(jsonString);
-
-            mSettingsObserver.getValue().onChange(true, null, 0, mUserTracker.getUserId());
-
-            assertThat(mCurrentStyle).isEqualTo(style);
-        }
-    }
-
-    @Test
-    public void onSettingChanged_invalidStyle() {
-        when(mDeviceProvisionedController.isUserSetup(anyInt())).thenReturn(true);
-        String jsonString = "{\"android.theme.customization.system_palette\":\"A16B00\","
-                + "\"android.theme.customization.theme_style\":\"some_invalid_name\"}";
-
-        when(mSecureSettings.getStringForUser(
-                eq(Settings.Secure.THEME_CUSTOMIZATION_OVERLAY_PACKAGES), anyInt()))
-                .thenReturn(jsonString);
-
-        mSettingsObserver.getValue().onChange(true, null, 0, mUserTracker.getUserId());
-
-        assertThat(mCurrentStyle).isEqualTo(Style.VIVID);
     }
 
     @Test
@@ -674,11 +635,11 @@ public class ThemeOverlayControllerTest extends SysuiTestCase {
                 mUserTracker, mDumpManager, mFeatureFlags, mResources, mWakefulnessLifecycle) {
             @Nullable
             @Override
-            protected FabricatedOverlay getOverlay(int color, int type, Style style) {
+            protected FabricatedOverlay getOverlay(int color, int type) {
                 FabricatedOverlay overlay = mock(FabricatedOverlay.class);
                 when(overlay.getIdentifier())
                         .thenReturn(new OverlayIdentifier("com.thebest.livewallpaperapp.ever"));
-                mColorScheme = new ColorScheme(color, false /* nightMode */, style);
+                mColorScheme = new ColorScheme(color, false /* nightMode */);
                 return overlay;
             }
 
@@ -711,11 +672,11 @@ public class ThemeOverlayControllerTest extends SysuiTestCase {
                 mUserTracker, mDumpManager, mFeatureFlags, mResources, mWakefulnessLifecycle) {
             @Nullable
             @Override
-            protected FabricatedOverlay getOverlay(int color, int type, Style style) {
+            protected FabricatedOverlay getOverlay(int color, int type) {
                 FabricatedOverlay overlay = mock(FabricatedOverlay.class);
                 when(overlay.getIdentifier())
                         .thenReturn(new OverlayIdentifier(Integer.toHexString(color | 0xff000000)));
-                mColorScheme = new ColorScheme(color, false /* nightMode */, style);
+                mColorScheme = new ColorScheme(color, false /* nightMode */);
                 return overlay;
             }
         };

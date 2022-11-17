@@ -141,7 +141,7 @@ class CustomThemeOverlayController @Inject constructor(
     override fun getNeutralColor(colors: WallpaperColors) = colors.primaryColor.toArgb()
     override fun getAccentColor(colors: WallpaperColors) = getNeutralColor(colors)
 
-    override fun getOverlay(primaryColor: Int, type: Int, style: Style): FabricatedOverlay {
+    override fun getOverlay(primaryColor: Int, type: Int): FabricatedOverlay {
         cond = Zcam.ViewingConditions(
             surroundFactor = Zcam.ViewingConditions.SURROUND_AVERAGE,
             // sRGB
