@@ -177,7 +177,6 @@ public class BiometricUnlockController extends KeyguardUpdateMonitorCallback imp
     private ScrimController mScrimController;
     private PendingAuthenticated mPendingAuthenticated = null;
     private boolean mPendingShowBouncer;
-    private final int mWakeUpDelay;
     private boolean mHasScreenTurnedOnSinceAuthenticating;
     private boolean mFadedAwayAfterWakeAndUnlock;
     private BiometricModeListener mBiometricModeListener;
@@ -322,8 +321,6 @@ public class BiometricUnlockController extends KeyguardUpdateMonitorCallback imp
         mSessionTracker = sessionTracker;
         mScreenOffAnimationController = screenOffAnimationController;
         mVibratorHelper = vibrator;
-        mWakeUpDelay = resources.getInteger(
-                com.android.internal.R.integer.config_wakeUpDelayDoze);
 
         dumpManager.registerDumpable(getClass().getName(), this);
     }
@@ -452,7 +449,6 @@ public class BiometricUnlockController extends KeyguardUpdateMonitorCallback imp
         // During wake and unlock, we need to draw black before waking up to avoid abrupt
         // brightness changes due to display state transitions.
         boolean alwaysOnEnabled = mDozeParameters.getAlwaysOn();
-        boolean delayWakeUp = mode == MODE_WAKE_AND_UNLOCK && alwaysOnEnabled && mWakeUpDelay > 0;
         Runnable wakeUp = ()-> {
             if (!wasDeviceInteractive) {
                 if (DEBUG_BIO_WAKELOCK) {
@@ -461,15 +457,12 @@ public class BiometricUnlockController extends KeyguardUpdateMonitorCallback imp
                 mPowerManager.wakeUp(SystemClock.uptimeMillis(), PowerManager.WAKE_REASON_GESTURE,
                         "android.policy:BIOMETRIC");
             }
-            if (delayWakeUp) {
-                mKeyguardViewMediator.onWakeAndUnlocking();
-            }
             Trace.beginSection("release wake-and-unlock");
             releaseBiometricWakeLock();
             Trace.endSection();
         };
 
-        if (mMode != MODE_NONE && !delayWakeUp) {
+        if (mMode != MODE_NONE) {
             wakeUp.run();
         }
         switch (mMode) {
@@ -522,11 +515,7 @@ public class BiometricUnlockController extends KeyguardUpdateMonitorCallback imp
                     mUpdateMonitor.awakenFromDream();
                 }
                 mNotificationShadeWindowController.setNotificationShadeFocusable(false);
-                if (delayWakeUp) {
-                    mHandler.postDelayed(wakeUp, mWakeUpDelay);
-                } else {
-                    mKeyguardViewMediator.onWakeAndUnlocking();
-                }
+                mKeyguardViewMediator.onWakeAndUnlocking();
                 Trace.endSection();
                 break;
             case MODE_ONLY_WAKE:

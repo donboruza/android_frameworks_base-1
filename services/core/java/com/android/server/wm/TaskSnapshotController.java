@@ -172,8 +172,6 @@ class TaskSnapshotController {
         if (shouldDisableSnapshots()) {
             return;
         }
-        // Method getClosingTasks will clear mTmpTasks. So we have to clear snapshots here.
-        clearTmpTasks();
         // We need to take a snapshot of the task if and only if all activities of the task are
         // either closing or hidden.
         getClosingTasks(closingApps, mTmpTasks);
@@ -688,7 +686,7 @@ class TaskSnapshotController {
         if (displayContent == null) {
             return;
         }
-        clearTmpTasks();
+        mTmpTasks.clear();
         displayContent.forAllTasks(task -> {
             // Since RecentsAnimation will handle task snapshot while switching apps with the best
             // capture timing (e.g. IME window capture), No need additional task capture while task
@@ -702,14 +700,6 @@ class TaskSnapshotController {
         final boolean allowSnapshotHome = displayId == Display.DEFAULT_DISPLAY
                 && mService.mPolicy.isKeyguardSecure(mService.mCurrentUserId);
         snapshotTasks(mTmpTasks, allowSnapshotHome);
-    }
-
-    // We should remove snapshots which belong to these tasks. Otherwise they will be leaked.
-    void clearTmpTasks() {
-        for (Task t: mTmpTasks) {
-            mCache.onTaskRemoved(t.mTaskId);
-        }
-        mTmpTasks.clear();
     }
 
     /**

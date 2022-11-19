@@ -3057,23 +3057,10 @@ public final class PowerManagerService extends SystemService
                         >= powerGroup.getLastWakeTimeLocked()) {
                     groupNextTimeout = lastUserActivityTimeNoChangeLights + screenOffTimeout;
                     if (now < groupNextTimeout) {
-                        // MIUI MOD: START
-                        // if (powerGroup.isPolicyBrightLocked() || powerGroup.isPolicyVrLocked()) {
-                        if (powerGroup.isPolicyVrLocked()) {
-                        // END
+                        if (powerGroup.isPolicyBrightLocked() || powerGroup.isPolicyVrLocked()) {
                             groupUserActivitySummary = USER_ACTIVITY_SCREEN_BRIGHT;
                         } else if (powerGroup.isPolicyDimLocked()) {
                             groupUserActivitySummary = USER_ACTIVITY_SCREEN_DIM;
-                        // MIUI ADD: START
-                        } else if (powerGroup.isPolicyBrightLocked()){
-                            groupNextTimeout = lastUserActivityTimeNoChangeLights + screenOffTimeout - screenDimDuration;
-                            if (now > groupNextTimeout) {
-                                groupNextTimeout = lastUserActivityTimeNoChangeLights + screenOffTimeout;
-                                groupUserActivitySummary = USER_ACTIVITY_SCREEN_DIM;
-                            } else {
-                                groupUserActivitySummary = USER_ACTIVITY_SCREEN_BRIGHT;
-                            }
-                        // END
                         }
                     }
                 }
@@ -4531,28 +4518,31 @@ public final class PowerManagerService extends SystemService
     }
 
     private boolean forceSuspendInternal(int uid) {
-        synchronized (mLock) {
-            mForceSuspendActive = true;
-            // Place the system in an non-interactive state
-            for (int idx = 0; idx < mPowerGroups.size(); idx++) {
-                sleepPowerGroupLocked(mPowerGroups.valueAt(idx), mClock.uptimeMillis(),
-                        PowerManager.GO_TO_SLEEP_REASON_FORCE_SUSPEND, uid);
-            }
+        try {
+            synchronized (mLock) {
+                mForceSuspendActive = true;
+                // Place the system in an non-interactive state
+                for (int idx = 0; idx < mPowerGroups.size(); idx++) {
+                    sleepPowerGroupLocked(mPowerGroups.valueAt(idx), mClock.uptimeMillis(),
+                            PowerManager.GO_TO_SLEEP_REASON_FORCE_SUSPEND, uid);
+                }
 
-            // Disable all the partial wake locks as well
-            updateWakeLockDisabledStatesLocked();
+                // Disable all the partial wake locks as well
+                updateWakeLockDisabledStatesLocked();
+            }
 
             Slog.i(TAG, "Force-Suspending (uid " + uid + ")...");
             boolean success = mNativeWrapper.nativeForceSuspend();
             if (!success) {
                 Slog.i(TAG, "Force-Suspending failed in native.");
             }
-
-            mForceSuspendActive = false;
-            // Re-enable wake locks once again.
-            updateWakeLockDisabledStatesLocked();
-
             return success;
+        } finally {
+            synchronized (mLock) {
+                mForceSuspendActive = false;
+                // Re-enable wake locks once again.
+                updateWakeLockDisabledStatesLocked();
+            }
         }
     }
 

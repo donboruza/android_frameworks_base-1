@@ -3572,14 +3572,11 @@ public final class DisplayManagerService extends SystemService {
                 for (int i = 0; i < size; i++) {
                     final int id = displayGroup.getIdLocked(i);
                     final DisplayDevice displayDevice = mLogicalDisplayMapper.getDisplayLocked(
-                            id, true).getPrimaryDisplayDeviceLocked();
+                            id).getPrimaryDisplayDeviceLocked();
                     final int flags = displayDevice.getDisplayDeviceInfoLocked().flags;
                     if ((flags & DisplayDeviceInfo.FLAG_NEVER_BLANK) == 0) {
                         final DisplayPowerController displayPowerController =
                                 mDisplayPowerControllers.get(id);
-                        if (displayPowerController == null) {
-                            continue;
-                        }
                         ready &= displayPowerController.requestPowerState(request,
                                 waitForNegativeProximity);
                     }
