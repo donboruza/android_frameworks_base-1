@@ -54,8 +54,7 @@ public class ScarletIdleManager {
     static Context imContext;
     static ContentResolver mContentResolver;
     static List<String> killablePackages;
-    static final long IDLE_TIME_NEEDED = 10000;
-    static int ultraSaverStatus;
+    static final long IDLE_TIME_NEEDED = 20000;
 
     public static void initializeAssistant(Context mContext) {
         imContext = mContext;
@@ -92,14 +91,14 @@ public class ScarletIdleManager {
     public static void cacheCleaner(PackageManager pm) {
         List<ApplicationInfo> apps = pm.getInstalledApplications(0);
         for (ApplicationInfo packageInfo : apps) {
-            pm.deleteApplicationCacheFiles(packageInfo.packageName,null);
+            pm.deleteApplicationCacheFiles(packageInfo.packageName, null);
         }
     }
 
     public static void powerSaverHandler(boolean enable) {
         PowerManagerInternal mLocalPowerManager = LocalServices.getService(PowerManagerInternal.class);
         if (mLocalPowerManager != null) {
-          mLocalPowerManager.setPowerMode(Mode.LOW_POWER, enable);
+          mLocalPowerManager.setPowerMode(Mode.DEVICE_IDLE, enable);
         }
     }
 
