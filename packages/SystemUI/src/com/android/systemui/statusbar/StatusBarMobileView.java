@@ -428,6 +428,8 @@ public class StatusBarMobileView extends FrameLayout implements DarkReceiver,
     private void showOldStyle(MobileIconState state) {
         mMobileType.setVisibility(View.GONE);
         mMobileTypeSmall.setContentDescription(state.typeContentDescription);
+        mMobileTypeSmall.setScaleX(getContext().getResources().getConfiguration().fontScale);
+        mMobileTypeSmall.setScaleY(getContext().getResources().getConfiguration().fontScale);
         mMobileTypeSmall.setImageResource(state.typeId);
         mMobileTypeSmall.setVisibility(View.VISIBLE);
         setMobileSignalWidth(false);
@@ -435,6 +437,8 @@ public class StatusBarMobileView extends FrameLayout implements DarkReceiver,
 
     private void showNewStyle(MobileIconState state) {
         mMobileType.setVisibility(View.VISIBLE);
+        mMobileType.setScaleX(getContext().getResources().getConfiguration().fontScale);
+        mMobileType.setScaleY(getContext().getResources().getConfiguration().fontScale);
         mMobileType.setContentDescription(state.typeContentDescription);
         mMobileType.setImageResource(state.typeId);
         mMobileTypeSmall.setVisibility(View.GONE);
