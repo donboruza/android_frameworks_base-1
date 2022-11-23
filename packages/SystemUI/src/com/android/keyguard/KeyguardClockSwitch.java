@@ -126,7 +126,7 @@ public class KeyguardClockSwitch extends RelativeLayout {
 
     public void onThemeChanged() {
         boolean isClockSingleLine = Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.SMALL_CLOCK_DOUBLE_LINE , 0, UserHandle.USER_CURRENT) == 0;
+                Settings.System.SMALL_CLOCK_DOUBLE_LINE , 1, UserHandle.USER_CURRENT) == 0;
                 
 	if (isClockSingleLine) {
            mLargeClockView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mContext.getResources()
@@ -143,7 +143,7 @@ public class KeyguardClockSwitch extends RelativeLayout {
 	}
 
         int customClockFont = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                Settings.Secure.KG_CUSTOM_CLOCK_FONT , 0, UserHandle.USER_CURRENT);
+                Settings.Secure.KG_CUSTOM_CLOCK_FONT , 23, UserHandle.USER_CURRENT);
 
         switch (customClockFont) {
         	case 0:

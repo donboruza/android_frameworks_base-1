@@ -229,7 +229,7 @@ public class AnimatableClockController extends ViewController<AnimatableClockVie
      */
     public int isBrokenFont() {
         int customClockFont = Settings.Secure.getIntForUser(getContext().getContentResolver(),
-                Settings.Secure.KG_CUSTOM_CLOCK_FONT , 0, UserHandle.USER_CURRENT);
+                Settings.Secure.KG_CUSTOM_CLOCK_FONT , 23, UserHandle.USER_CURRENT);
 	int isBroken = 0;
                 
 	switch (customClockFont) {
@@ -285,9 +285,9 @@ public class AnimatableClockController extends ViewController<AnimatableClockVie
 
     private void updateColors() {
         boolean isCustomColorEnabled = Settings.Secure.getIntForUser(getContext().getContentResolver(),
-                Settings.Secure.KG_CUSTOM_CLOCK_COLOR_ENABLED, 0, UserHandle.USER_CURRENT) != 0;
+                Settings.Secure.KG_CUSTOM_CLOCK_COLOR_ENABLED, 1, UserHandle.USER_CURRENT) != 0;
         int customClockColor = Settings.Secure.getIntForUser(getContext().getContentResolver(),
-                Settings.Secure.KG_CUSTOM_CLOCK_COLOR, 0x92FFFFFF, UserHandle.USER_CURRENT);
+                Settings.Secure.KG_CUSTOM_CLOCK_COLOR, 0xFFFFFFFF, UserHandle.USER_CURRENT);
         if (isCustomColorEnabled) {
         mLockScreenColor = customClockColor;
         } else {

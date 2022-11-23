@@ -78,7 +78,7 @@ class AnimatableClockView @JvmOverloads constructor(
 
 
     private fun isSmallClockSingleLine(): Boolean = Settings.System.getIntForUser(context.contentResolver, 
-    Settings.System.SMALL_CLOCK_DOUBLE_LINE, 0,  UserHandle.USER_CURRENT) == 0
+    Settings.System.SMALL_CLOCK_DOUBLE_LINE, 1,  UserHandle.USER_CURRENT) == 0
 
     init {
         val animatableClockViewAttributes = context.obtainStyledAttributes(

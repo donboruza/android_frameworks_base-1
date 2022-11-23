@@ -317,7 +317,7 @@ public class KeyguardClockSwitchController extends ViewController<KeyguardClockS
 
     private void updateClockLayout() {
         boolean isClockSingleLine = Settings.System.getIntForUser(getContext().getContentResolver(),
-                Settings.System.SMALL_CLOCK_DOUBLE_LINE , 0, UserHandle.USER_CURRENT) == 0;
+                Settings.System.SMALL_CLOCK_DOUBLE_LINE , 1, UserHandle.USER_CURRENT) == 0;
         
         int largeClockTopMargin;
         if (isClockSingleLine) {
