@@ -1143,6 +1143,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
         mQuickAccessWalletController.queryWalletCards(mCardRetriever);
 
         updateWalletVisibility();
+        updateQRCodeButtonVisibility();
         updateAffordanceColors();
     }
 
@@ -1160,21 +1161,23 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
 
     private void updateQRCodeButtonVisibility() {
         if (mQuickAccessWalletController != null
-                && mQuickAccessWalletController.isWalletEnabled()) {
+                && mQuickAccessWalletController.isWalletEnabled()
+                || mQRCodeScannerController == null
+                ) {
             // Don't enable if quick access wallet is enabled
             return;
         }
-
-        if (mQRCodeScannerController != null
-                && mQRCodeScannerController.isEnabledForLockScreenButton()) {
-            mQRCodeScannerButton.setVisibility(VISIBLE);
-            mQRCodeScannerButton.setOnClickListener(this::onQRCodeScannerClicked);
-            mIndicationArea.setPadding(mIndicationPadding, 0, mIndicationPadding, 0);
-        } else {
+        if (mDozing
+                || !mQRCodeScannerController.isEnabledForLockScreenButton()) {
             mQRCodeScannerButton.setVisibility(GONE);
+
             if (mControlsButton.getVisibility() == GONE) {
                 mIndicationArea.setPadding(0, 0, 0, 0);
             }
+        } else {
+            mQRCodeScannerButton.setVisibility(VISIBLE);
+            mQRCodeScannerButton.setOnClickListener(this::onQRCodeScannerClicked);
+            mIndicationArea.setPadding(mIndicationPadding, 0, mIndicationPadding, 0);
         }
     }
 
@@ -1266,6 +1269,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
                     mWalletButton.setImageDrawable(tileIcon);
                 }
                 updateWalletVisibility();
+                updateQRCodeButtonVisibility();
                 updateAffordanceColors();
             });
         }
@@ -1275,6 +1279,7 @@ public class KeyguardBottomAreaView extends FrameLayout implements View.OnClickL
             mHasCard = false;
             post(() -> {
                 updateWalletVisibility();
+                updateQRCodeButtonVisibility();
                 updateAffordanceColors();
             });
         }
