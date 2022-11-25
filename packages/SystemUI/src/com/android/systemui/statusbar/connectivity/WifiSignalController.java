@@ -94,11 +94,9 @@ public class WifiSignalController extends SignalController<WifiState, IconGroup>
         // only show wifi in the cluster if connected or if wifi-only
         boolean visibleWhenEnabled = mContext.getResources().getBoolean(
                 R.bool.config_showWifiIndicatorWhenEnabled);
-        boolean isDefault = mCurrentState.isDefault || (!mNetworkController.isRadioOn()
-                && !mNetworkController.isEthernetDefault());
         boolean wifiVisible = mCurrentState.enabled && (
                 (mCurrentState.connected && mCurrentState.inetCondition == 1)
-                        || !mHasMobileDataFeature || isDefault
+                        || !mHasMobileDataFeature || mCurrentState.isDefault
                         || visibleWhenEnabled);
         String wifiDesc = mCurrentState.connected ? mCurrentState.ssid : null;
         boolean ssidPresent = wifiVisible && mCurrentState.ssid != null;
@@ -108,10 +106,11 @@ public class WifiSignalController extends SignalController<WifiState, IconGroup>
         }
         IconState statusIcon = new IconState(
                 wifiVisible, getCurrentIconId(), contentDescription);
-        IconState getQsIcon = new IconState(mCurrentState.connected,
+        IconState qsIcon = new IconState(mCurrentState.connected,
                 mWifiTracker.isCaptivePortal ? R.drawable.ic_qs_wifi_disconnected
                         : getQsCurrentIconId(), contentDescription);
-        IconState qsIcon = wifiVisible ? getQsIcon : null;
+        boolean isDefault = mCurrentState.isDefault || (!mNetworkController.isRadioOn()
+                && !mNetworkController.isEthernetDefault());
         WifiIndicators wifiIndicators = new WifiIndicators(
                 mCurrentState.enabled, statusIcon, qsIcon,
                 ssidPresent && mCurrentState.activityIn,
@@ -135,11 +134,14 @@ public class WifiSignalController extends SignalController<WifiState, IconGroup>
                 && mCurrentState.isDefault;
         IconState statusIcon =
                 new IconState(sbVisible, getCurrentIconIdForCarrierWifi(), contentDescription);
-        IconState getQsIcon = new IconState(mCurrentState.connected, getQsCurrentIconIdForCarrierWifi(),
-                    contentDescription);
-        IconState qsIcon = sbVisible ? getQsIcon: null;
         int typeIcon = sbVisible ? icons.dataType : 0;
-        int qsTypeIcon = sbVisible ? icons.dataType : 0;
+        int qsTypeIcon = 0;
+        IconState qsIcon = null;
+        if (sbVisible) {
+            qsTypeIcon = icons.dataType;
+            qsIcon = new IconState(mCurrentState.connected, getQsCurrentIconIdForCarrierWifi(),
+                    contentDescription);
+        }
         CharSequence description =
                 mNetworkController.getNetworkNameForCarrierWiFi(mCurrentState.subId);
         MobileDataIndicators mobileDataIndicators = new MobileDataIndicators(
