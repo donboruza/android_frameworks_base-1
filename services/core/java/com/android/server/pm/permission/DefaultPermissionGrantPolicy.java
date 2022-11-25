@@ -467,9 +467,16 @@ final class DefaultPermissionGrantPolicy {
                     || ArrayUtils.isEmpty(pkg.requestedPermissions)
                     || !pm.isGranted(Manifest.permission.READ_PRIVILEGED_PHONE_STATE,
                             pkg, UserHandle.of(userId))
+                    || !pm.isGranted(Manifest.permission.READ_PHONE_STATE,
+                            pkg, UserHandle.of(userId))
                     || pm.isSysComponentOrPersistentPlatformSignedPrivApp(pkg)) {
                 continue;
             }
+
+            pm.updatePermissionFlags(Manifest.permission.READ_PHONE_STATE, pkg,
+                    PackageManager.FLAG_PERMISSION_SYSTEM_FIXED,
+                    0,
+                    UserHandle.of(userId));
 
             grantRuntimePermissions(pm, pkg,
                     Collections.singleton(Manifest.permission.READ_PHONE_STATE),
@@ -477,17 +484,24 @@ final class DefaultPermissionGrantPolicy {
                     userId);
         }
         
-        // Grant ACCESS_COARSE_LOCATION to all system apps that have ACCESS_FINE_LOCATION
+        // Grant ACCESS_COARSE_LOCATION to all system apps that have ACCESS_FINE_LOCATION/ACCESS_COARSE_LOCATION
         for (PackageInfo locPkg : packages) {
             if (locPkg == null
                     || !doesPackageSupportRuntimePermissions(locPkg)
                     || ArrayUtils.isEmpty(locPkg.requestedPermissions)
                     || !pm.isGranted(Manifest.permission.ACCESS_FINE_LOCATION,
                             locPkg, UserHandle.of(userId))
+                    || !pm.isGranted(Manifest.permission.ACCESS_COARSE_LOCATION,
+                            locPkg, UserHandle.of(userId))
                     || pm.isSysComponentOrPersistentPlatformSignedPrivApp(locPkg)) {
                 continue;
             }
-                    
+
+            pm.updatePermissionFlags(Manifest.permission.ACCESS_COARSE_LOCATION, locPkg,
+                    PackageManager.FLAG_PERMISSION_SYSTEM_FIXED,
+                    0,
+                    UserHandle.of(userId));
+         
             grantRuntimePermissions(pm, locPkg,
                     Collections.singleton(Manifest.permission.ACCESS_COARSE_LOCATION),
                     true, // systemFixed
@@ -1817,7 +1831,7 @@ final class DefaultPermissionGrantPolicy {
                 int flagMask, int flagValues, @NonNull UserHandle user) {
             PermissionState state = getPermissionState(permission, pkg, user);
             state.initFlags();
-            state.newFlags |= flagValues & flagMask;
+            state.newFlags = (state.newFlags & ~flagMask) | (flagValues & flagMask);
         }
 
         @Override
