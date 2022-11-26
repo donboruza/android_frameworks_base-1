@@ -41,7 +41,7 @@
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
         app:lottie_speed="0.5"
-        app:lottie_rawRes="@raw/udfps_aod_fp"/>
+        app:lottie_rawRes="@raw/udfps_lockscreen_fp"/>
 
     <!-- LockScreen fingerprint icon from 0 stroke width to full width -->
     <com.airbnb.lottie.LottieAnimationView
