@@ -280,6 +280,18 @@ public class SystemSensorManager extends SensorManager {
                 + MAX_LISTENER_COUNT);
         }
         if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.SCARLET_IDLE_ASSISTANT_MANAGER, 0) == 1 
+                && Settings.Secure.getInt(mContext.getContentResolver(),
+                Settings.Secure.SCARLET_AGGRESSIVE_MODE, 0) == 1 
+                && Settings.Secure.getInt(mContext.getContentResolver(),
+                Settings.Secure.SCARLET_AGGRESSIVE_MODE_SENSORS_TOGGLE, 0) == 1 
+                || Settings.Secure.getInt(mContext.getContentResolver(),
+                Settings.Secure.SLEEP_MODE_ENABLED, 0) == 1 
+                && Settings.Secure.getInt(mContext.getContentResolver(),
+                Settings.Secure.SLEEP_MODE_SENSORS_TOGGLE, 0) == 1) {
+            return false;
+        }
+        if (Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.SENSOR_BLOCK, 0) == 1) {
             int sensortype = sensor.getType();
             if (sensortype == Sensor.TYPE_SIGNIFICANT_MOTION ||

@@ -39,9 +39,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.ContentObserver;
-import android.hardware.Sensor;
-import android.hardware.SensorPrivacyManager;
-import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
@@ -169,7 +166,6 @@ public class RiceUtils {
         private AudioManager mAudioManager;
         private NotificationManager mNotificationManager;
         private WifiManager mWifiManager;
-        private SensorPrivacyManager mSensorPrivacyManager;
         private BluetoothAdapter mBluetoothAdapter;
         private int mSubscriptionId;
         private Toast mToast;
@@ -197,7 +193,6 @@ public class RiceUtils {
             mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
             mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
             mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-            mSensorPrivacyManager = (SensorPrivacyManager) mContext.getSystemService(Context.SENSOR_PRIVACY_SERVICE);
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             mSubscriptionId = SubscriptionManager.INVALID_SUBSCRIPTION_ID;
             mResources = mContext.getResources();
@@ -289,27 +284,6 @@ public class RiceUtils {
             }
         }
 
-        private boolean isSensorEnabled() {
-            if (mSensorPrivacyManager == null) {
-                mSensorPrivacyManager = (SensorPrivacyManager) mContext.getSystemService(Context.SENSOR_PRIVACY_SERVICE);
-            }
-            try {
-                return !mSensorPrivacyManager.isAllSensorPrivacyEnabled();
-            } catch (Exception e) {
-                return false;
-            }
-        }
-
-        private void setSensorEnabled(boolean enable) {
-            if (mSensorPrivacyManager == null) {
-                mSensorPrivacyManager = (SensorPrivacyManager) mContext.getSystemService(Context.SENSOR_PRIVACY_SERVICE);
-            }
-            try {
-                mSensorPrivacyManager.setAllSensorPrivacy(!enable);
-            } catch (Exception e) {
-            }
-        }
-
         private int getZenMode() {
             if (mNotificationManager == null) {
                 mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -387,13 +361,6 @@ public class RiceUtils {
                 setLocationMode(Settings.Secure.LOCATION_MODE_OFF);
             }
 
-            // Disable Sensors
-            final boolean scarletDisableSensors = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SCARLET_AGGRESSIVE_MODE_SENSORS_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
-            if (scarletDisableSensors) {
-                setSensorEnabled(false);
-            }
-            
             addScarletNotification();
         }
 
@@ -430,13 +397,6 @@ public class RiceUtils {
             if (disableLocation) {
                 mLocationState = getLocationMode();
                 setLocationMode(Settings.Secure.LOCATION_MODE_OFF);
-            }
-
-            // Disable Sensors
-            final boolean disableSensors = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SLEEP_MODE_SENSORS_TOGGLE, 1, UserHandle.USER_CURRENT) == 1;
-            if (disableSensors) {
-                setSensorEnabled(false);
             }
 
             // Set Ringer mode (0: Off, 1: Vibrate, 2:DND: 3:Silent)
@@ -491,19 +451,6 @@ public class RiceUtils {
             if (scarletDisableLocation && mLocationState != getLocationMode()) {
                 setLocationMode(mLocationState);
             }
-
-            // Enable Sensors
-            final boolean scarletDisableSensors = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SCARLET_AGGRESSIVE_MODE_SENSORS_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
-            if (scarletDisableSensors) {
-                setSensorEnabled(true);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {}
-                if (!isSensorEnabled()) {
-                    setSensorEnabled(true);
-                }
-            }
             
             mNotificationManager.cancel(SCARLET_NOTIFICATION_ID);
 
@@ -538,19 +485,6 @@ public class RiceUtils {
                     Settings.Secure.SLEEP_MODE_LOCATION_TOGGLE, 1, UserHandle.USER_CURRENT) == 1;
             if (disableLocation && mLocationState != getLocationMode()) {
                 setLocationMode(mLocationState);
-            }
-
-            // Enable Sensors
-            final boolean disableSensors = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SLEEP_MODE_SENSORS_TOGGLE, 1, UserHandle.USER_CURRENT) == 1;
-            if (disableSensors) {
-                setSensorEnabled(true);
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {}
-                if (!isSensorEnabled()) {
-                    setSensorEnabled(true);
-                }
             }
 
             // Set Ringer mode (0: Off, 1: Vibrate, 2:DND: 3:Silent)

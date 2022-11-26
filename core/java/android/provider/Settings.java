@@ -11964,6 +11964,7 @@ public final class Settings {
          * Whether to enable Sleep Mode
          * @hide
          */
+        @Readable
         public static final String SLEEP_MODE_ENABLED = "sleep_mode_enabled";
 
         /**
@@ -12014,6 +12015,7 @@ public final class Settings {
          * Whether to disable Sensors in Sleep Mode
          * @hide
          */
+        @Readable
         public static final String SLEEP_MODE_SENSORS_TOGGLE = "sleep_mode_sensors_toggle";
 
         /**
@@ -12026,6 +12028,7 @@ public final class Settings {
          * Scarlet Idle Assistant Manager Aggressive mode
          * @hide
          */
+        @Readable
         public static final String SCARLET_AGGRESSIVE_MODE = "scarlet_aggressive_mode";
        
         /**
@@ -12057,7 +12060,7 @@ public final class Settings {
          * @hide
          */
         public static final String SCARLET_AGGRESSIVE_MODE_LOCATION_TOGGLE = "scarlet_aggressive_mode_location_toggle";
-        
+
         /**
          * Scarlet Idle Assistant Manager will automatically disable sensors
          * @hide
