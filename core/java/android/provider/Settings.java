@@ -11712,11 +11712,6 @@ public final class Settings {
          * @hide
          */
         public static final String EXTENDED_MONET_THEMES = "monet_themes_style";
-      
-        /**
-         * @hide
-         */
-        public static final String ENABLE_COMBINED_SIGNAL_ICONS = "enable_combined_signal_icons";
  
         /**
          * @hide
