@@ -127,10 +127,12 @@
     <!-- Whether device has OEM power charging support -->
     <java-symbol type="bool" name="config_hasOemCharger" />
 
-   <!-- Settings Restart -->
+   <!-- System Restart -->
    <java-symbol type="string" name="settings_restart_title" />
    <java-symbol type="string" name="settings_restart_message" />
-   
+   <java-symbol type="string" name="system_restart_title" />
+   <java-symbol type="string" name="system_restart_message" />
+
     <!-- Whether devices suports in-display fingerprint when screen is off -->
     <java-symbol type="bool" name="config_supportsScreenOffUdfps" />
     
