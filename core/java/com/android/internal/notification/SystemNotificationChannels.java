@@ -218,6 +218,7 @@ public class SystemNotificationChannels {
         NotificationChannel scarletChanges = new NotificationChannel(SCARLET,
                 context.getString(R.string.notification_channel_scarlet),
                 NotificationManager.IMPORTANCE_LOW);
+        scarletChanges.setBlockable(true);
         channelsList.add(scarletChanges);
 
         final NotificationChannel newFeaturePrompt = new NotificationChannel(

@@ -183,7 +183,7 @@
   <java-symbol type="drawable" name="ic_scarlet" />
   <java-symbol type="string" name="notification_channel_scarlet" />
   <java-symbol type="string" name="scarlet_notification_title" />
-  <java-symbol type="string" name="scarlet_aggressive_mode" />
+  <java-symbol type="string" name="scarlet_normal_mode" />
 
   <!-- Lock gesture -->
   <java-symbol type="string" name="gesture_locked_warning" />

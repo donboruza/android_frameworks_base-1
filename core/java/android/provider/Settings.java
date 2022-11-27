@@ -6222,11 +6222,18 @@ public final class Settings {
         public static final String FLASHLIGHT_ON_CALL_IGNORE_DND = "flashlight_on_call_ignore_dnd";
 
         /**
-         * Scarlet Idle Assistant Manager
+         * Scarlet System Manager
          * @hide
          */
         @Readable
-        public static final String SCARLET_IDLE_ASSISTANT_MANAGER = "scarlet_idle_assistant_manager";
+        public static final String SCARLET_SYSTEM_MANAGER = "scarlet_system_manager";
+
+        /**
+         * Scarlet System Manager System Boost
+         * @hide
+         */
+        @Readable
+        public static final String SCARLET_SYSTEM_BOOST = "scarlet_system_boost";
 
         /**
          * Rate in Hz in which to blink flashlight_on_call
@@ -12043,47 +12050,53 @@ public final class Settings {
         public static final String SLEEP_MODE_RINGER_MODE = "sleep_mode_ringer_mode";
 
         /**
-         * Scarlet Idle Assistant Manager Aggressive mode
+         * Scarlet System Manager Aggressive Idle mode
          * @hide
          */
         @Readable
-        public static final String SCARLET_AGGRESSIVE_MODE = "scarlet_aggressive_mode";
+        public static final String SCARLET_AGGRESSIVE_IDLE_MODE = "scarlet_aggressive_idle_mode";
        
         /**
-         * Scarlet Idle Assistant Manager Aggressive mode trigger/callback
+         * Scarlet System Manager Aggressive Idle mode trigger/callback
          * @hide
          */
-        public static final String SCARLET_AGGRESSIVE_MODE_TRIGGER = "scarlet_aggressive_mode_trigger";
+        @Readable
+        public static final String SCARLET_AGGRESSIVE_IDLE_MODE_TRIGGER = "scarlet_aggressive_idle_mode_trigger";
  
         /**
-         * Scarlet Idle Assistant Manager will automatically disable wifi
+         * Scarlet System Manager will automatically disable wifi
          * @hide
          */
-        public static final String SCARLET_AGGRESSIVE_MODE_WIFI_TOGGLE = "scarlet_aggressive_mode_wifi_toggle";
+        @Readable
+        public static final String SCARLET_AGGRESSIVE_IDLE_MODE_WIFI_TOGGLE = "scarlet_aggressive_idle_mode_wifi_toggle";
         
         /**
-         * Scarlet Idle Assistant Manager will automatically disable bluetooth
+         * Scarlet System Manager will automatically disable bluetooth
          * @hide
          */
-        public static final String SCARLET_AGGRESSIVE_MODE_BLUETOOTH_TOGGLE = "scarlet_aggressive_mode_bluetooth_toggle";
+        @Readable
+        public static final String SCARLET_AGGRESSIVE_IDLE_MODE_BLUETOOTH_TOGGLE = "scarlet_aggressive_idle_mode_bluetooth_toggle";
         
         /**
-         * Scarlet Idle Assistant Manager will automatically disable data
+         * Scarlet System Manager will automatically disable data
          * @hide
          */
-        public static final String SCARLET_AGGRESSIVE_MODE_CELLULAR_TOGGLE = "scarlet_aggressive_mode_cellular_toggle";
+        @Readable
+        public static final String SCARLET_AGGRESSIVE_IDLE_MODE_CELLULAR_TOGGLE = "scarlet_aggressive_idle_mode_cellular_toggle";
         
         /**
-         * Scarlet Idle Assistant Manager will automatically disable location
+         * Scarlet System Manager will automatically disable location
          * @hide
          */
-        public static final String SCARLET_AGGRESSIVE_MODE_LOCATION_TOGGLE = "scarlet_aggressive_mode_location_toggle";
+        @Readable
+        public static final String SCARLET_AGGRESSIVE_IDLE_MODE_LOCATION_TOGGLE = "scarlet_aggressive_idle_mode_location_toggle";
 
         /**
-         * Scarlet Idle Assistant Manager will automatically disable sensors
+         * Scarlet System Manager will automatically disable sensors
          * @hide
          */
-        public static final String SCARLET_AGGRESSIVE_MODE_SENSORS_TOGGLE = "scarlet_aggressive_mode_sensors_toggle";
+        @Readable
+        public static final String SCARLET_AGGRESSIVE_IDLE_MODE_SENSORS_TOGGLE = "scarlet_aggressive_idle_mode_sensors_toggle";
 
         /**
          * These entries are considered common between the personal and the managed profile,

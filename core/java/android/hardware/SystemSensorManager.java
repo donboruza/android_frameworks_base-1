@@ -280,11 +280,11 @@ public class SystemSensorManager extends SensorManager {
                 + MAX_LISTENER_COUNT);
         }
         if (Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.SCARLET_IDLE_ASSISTANT_MANAGER, 0) == 1 
+                Settings.System.SCARLET_SYSTEM_MANAGER, 0) == 1 
                 && Settings.Secure.getInt(mContext.getContentResolver(),
-                Settings.Secure.SCARLET_AGGRESSIVE_MODE, 0) == 1 
+                Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE, 0) == 1 
                 && Settings.Secure.getInt(mContext.getContentResolver(),
-                Settings.Secure.SCARLET_AGGRESSIVE_MODE_SENSORS_TOGGLE, 0) == 1 
+                Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_SENSORS_TOGGLE, 0) == 1 
                 || Settings.Secure.getInt(mContext.getContentResolver(),
                 Settings.Secure.SLEEP_MODE_ENABLED, 0) == 1 
                 && Settings.Secure.getInt(mContext.getContentResolver(),

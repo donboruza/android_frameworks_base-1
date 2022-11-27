@@ -66,8 +66,8 @@
     
     <!-- Scarlet Services -->
     <string name="notification_channel_scarlet">Scarlet Services</string>
-    <string name="scarlet_notification_title">Scarlet Idle Services active</string>
-    <string name="scarlet_aggressive_mode">Scarlet services will aggresively optimize device usage while device is idle...</string>
+    <string name="scarlet_notification_title">Scarlet System Manager is active</string>
+    <string name="scarlet_normal_mode">Scarlet System Manager is optimizing your device\'s performance and power usage</string>
 
     <!-- Lock gesture -->
     <string name="gesture_locked_warning">Swipe again to unlock gestures</string>

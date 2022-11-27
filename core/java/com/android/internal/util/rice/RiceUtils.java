@@ -201,10 +201,10 @@ public class RiceUtils {
                     Settings.Secure.SLEEP_MODE_ENABLED, 0, UserHandle.USER_CURRENT) == 1;
            
             mScarletBasicMode = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.SCARLET_IDLE_ASSISTANT_MANAGER, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.System.SCARLET_SYSTEM_MANAGER, 0, UserHandle.USER_CURRENT) == 1;
          
             mScarletAggresiveMode = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SCARLET_AGGRESSIVE_MODE, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE, 0, UserHandle.USER_CURRENT) == 1;
 
             SettingsObserver observer = new SettingsObserver(new Handler(Looper.getMainLooper()));
             observer.observe();
@@ -331,7 +331,7 @@ public class RiceUtils {
 
             // Disable Wi-Fi
             final boolean scarletDisableWifi = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SCARLET_AGGRESSIVE_MODE_WIFI_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_WIFI_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
             if (scarletDisableWifi) {
                 mWifiState = isWifiEnabled();
                 setWifiEnabled(false);
@@ -339,7 +339,7 @@ public class RiceUtils {
 
             // Disable Bluetooth
             final boolean scarletDisableBluetooth = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SCARLET_AGGRESSIVE_MODE_BLUETOOTH_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_BLUETOOTH_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
             if (scarletDisableBluetooth) {
                 mBluetoothState = isBluetoothEnabled();
                 setBluetoothEnabled(false);
@@ -347,7 +347,7 @@ public class RiceUtils {
 
             // Disable Mobile Data
             final boolean scarletDisableData = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SCARLET_AGGRESSIVE_MODE_CELLULAR_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_CELLULAR_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
             if (scarletDisableData) {
                 mCellularState = getTelephonyManager().isDataEnabled();
                 getTelephonyManager().setDataEnabled(false);
@@ -355,13 +355,11 @@ public class RiceUtils {
 
             // Disable Location
             final boolean scarletDisableLocation = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SCARLET_AGGRESSIVE_MODE_LOCATION_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_LOCATION_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
             if (scarletDisableLocation) {
                 mLocationState = getLocationMode();
                 setLocationMode(Settings.Secure.LOCATION_MODE_OFF);
             }
-
-            addScarletNotification();
         }
 
         private void enable() {
@@ -426,34 +424,31 @@ public class RiceUtils {
 
             // Enable Wi-Fi
             final boolean scarletDisableWifi = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SCARLET_AGGRESSIVE_MODE_WIFI_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_WIFI_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
             if (scarletDisableWifi && mWifiState != isWifiEnabled()) {
                 setWifiEnabled(mWifiState);
             }
 
             // Enable Bluetooth
             final boolean scarletDisableBluetooth = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SCARLET_AGGRESSIVE_MODE_BLUETOOTH_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_BLUETOOTH_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
             if (scarletDisableBluetooth && mBluetoothState != isBluetoothEnabled()) {
                 setBluetoothEnabled(mBluetoothState);
             }
 
             // Enable Mobile Data
             final boolean scarletDisableData = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SCARLET_AGGRESSIVE_MODE_CELLULAR_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_CELLULAR_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
             if (scarletDisableData && mCellularState != getTelephonyManager().isDataEnabled()) {
                 getTelephonyManager().setDataEnabled(mCellularState);
             }
 
             // Enable Location
             final boolean scarletDisableLocation = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                    Settings.Secure.SCARLET_AGGRESSIVE_MODE_LOCATION_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
+                    Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_LOCATION_TOGGLE, 0, UserHandle.USER_CURRENT) == 1;
             if (scarletDisableLocation && mLocationState != getLocationMode()) {
                 setLocationMode(mLocationState);
             }
-            
-            mNotificationManager.cancel(SCARLET_NOTIFICATION_ID);
-
         }
 
         private void disable() {
@@ -504,12 +499,14 @@ public class RiceUtils {
             Intent intent = new Intent(SCARLET_SERVICES);
             intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND | Intent.FLAG_RECEIVER_INCLUDE_BACKGROUND);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
+	 
+	     String notifTitle = mResources.getString(R.string.scarlet_notification_title);
+	     String notifText = mResources.getString(R.string.scarlet_normal_mode);
             // Display a notification
             Notification.Builder scarletBuilder = new Notification.Builder(mContext, SystemNotificationChannels.SCARLET)
-                .setTicker(mResources.getString(R.string.scarlet_notification_title))
-                .setContentTitle(mResources.getString(R.string.scarlet_notification_title))
-                .setContentText(mResources.getString(R.string.scarlet_aggressive_mode))
+                .setTicker(notifTitle)
+                .setContentTitle(notifTitle)
+                .setContentText(notifText)
                 .setSmallIcon(R.drawable.ic_scarlet)
                 .setWhen(java.lang.System.currentTimeMillis())
                 .setOngoing(true)
@@ -595,10 +592,13 @@ public class RiceUtils {
                         Settings.Secure.SLEEP_MODE_ENABLED), false, this,
                         UserHandle.USER_ALL);
                 resolver.registerContentObserver(Settings.Secure.getUriFor(
-                        Settings.Secure.SCARLET_AGGRESSIVE_MODE), false, this,
+                        Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE), false, this,
                         UserHandle.USER_ALL);
                 resolver.registerContentObserver(Settings.Secure.getUriFor(
-                        Settings.Secure.SCARLET_AGGRESSIVE_MODE_TRIGGER), false, this,
+                        Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_TRIGGER), false, this,
+                        UserHandle.USER_ALL);
+                resolver.registerContentObserver(Settings.System.getUriFor(
+                        Settings.System.SCARLET_SYSTEM_MANAGER), false, this,
                         UserHandle.USER_ALL);
             }
 
@@ -611,14 +611,24 @@ public class RiceUtils {
                 final boolean enabled = Settings.Secure.getIntForUser(mContext.getContentResolver(),
                         Settings.Secure.SLEEP_MODE_ENABLED, 0, UserHandle.USER_CURRENT) == 1;
                 final boolean userEnabled = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                        Settings.Secure.SCARLET_AGGRESSIVE_MODE, 0, UserHandle.USER_CURRENT) == 1;
+                        Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE, 0, UserHandle.USER_CURRENT) == 1;
                 final boolean scarletAggEnabled = Settings.Secure.getIntForUser(mContext.getContentResolver(),
-                        Settings.Secure.SCARLET_AGGRESSIVE_MODE_TRIGGER, 0, UserHandle.USER_CURRENT) == 1;
+                        Settings.Secure.SCARLET_AGGRESSIVE_IDLE_MODE_TRIGGER, 0, UserHandle.USER_CURRENT) == 1;
+                        
+                final boolean scarletEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.SCARLET_SYSTEM_MANAGER, 0, UserHandle.USER_CURRENT) == 1;
+
                 setSleepMode(enabled);
-                if (userEnabled) {
-                  setScarletAggMode(scarletAggEnabled);
+
+                if (scarletEnabled) {
+                  if (userEnabled) {
+                    setScarletAggMode(scarletAggEnabled);
+                  } else {
+                    setScarletAggMode(false);
+                  }
+                  addScarletNotification();
                 } else {
-                  setScarletAggMode(false);
+                  mNotificationManager.cancel(SCARLET_NOTIFICATION_ID);
                 }
             }
         }

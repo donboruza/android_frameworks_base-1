@@ -32,6 +32,7 @@ import android.hardware.power.Boost;
 import android.hardware.power.Mode;
 import android.location.LocationManager;
 import android.os.Handler;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.PowerManagerInternal;
 import android.provider.Settings;
@@ -43,9 +44,9 @@ import com.android.systemui.statusbar.policy.LocationController;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScarletIdleManager {
-    static String TAG = "ScarletIdleManager";
-
+public class ScarletSystemManager {
+    static String TAG = "ScarletSystemManager";
+    
     static Handler scarletHandler = new Handler();
     static Runnable mStartManagerInstance;
     static Runnable mStopManagerInstance;
@@ -54,9 +55,16 @@ public class ScarletIdleManager {
     static Context imContext;
     static ContentResolver mContentResolver;
     static List<String> killablePackages;
-    static final long IDLE_TIME_NEEDED = 20000;
+    static final long INIT_TIME_NEEDED = 20000;
+    static final String SYS_SYSTEM_BGT = "persist.sys.bgt.enable";
+    static final String SYS_RENDER_BOOST_THREAD = "persist.sys.perf.topAppRenderThreadBoost.enable";
+    static final String SYS_CGROUP_FOLLOW = "persist.sys.cgroup_follow.enable";
+    static final String SYS_CGROUP_FOLLOW_DEX2OAT = "persist.sys.fw.cgroup_follow.dex2oat_only";
+    static final String SYS_COMPACTION = "persist.sys.appcompact.enable_app_compact";
+    static final String SYS_HW_VULKAN = "ro.hardware.vulkan";
+    static final String SYS_HWUI = "persist.sys.hwui.renderer";
 
-    public static void initializeAssistant(Context mContext) {
+    public static void initializeSystemServices(Context mContext) {
         imContext = mContext;
         killablePackages = new ArrayList<>();
         localActivityManager = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
@@ -75,17 +83,30 @@ public class ScarletIdleManager {
         };
     }
 
-    public static void startAssistantServices() {
+    public static void startSystemIdleServices() {
         RunningServices = localActivityManager.getRunningAppProcesses();
 
-        if (IDLE_TIME_NEEDED > timeBeforeAlarm(imContext) && timeBeforeAlarm(imContext) != 0) {
+        if (INIT_TIME_NEEDED > timeBeforeAlarm(imContext) && timeBeforeAlarm(imContext) != 0) {
             scarletHandler.postDelayed(mStartManagerInstance,100);
         } else {
-            scarletHandler.postDelayed(mStartManagerInstance,IDLE_TIME_NEEDED /*10ms*/);
+            scarletHandler.postDelayed(mStartManagerInstance,INIT_TIME_NEEDED /*20ms*/);
         }
         if (timeBeforeAlarm(imContext) != 0) {
             scarletHandler.postDelayed(mStopManagerInstance,(timeBeforeAlarm(imContext) - 900000));
         }
+    }
+    
+    public static void startBoostingService(boolean enable) {
+       SystemProperties.set(SYS_RENDER_BOOST_THREAD, enable ? "true" : "false");
+       SystemProperties.set(SYS_SYSTEM_BGT, enable ? "true" : "false");
+       SystemProperties.set(SYS_CGROUP_FOLLOW, enable ? "true" : "false");
+       SystemProperties.set(SYS_CGROUP_FOLLOW_DEX2OAT, enable ? "true" : "false");
+       SystemProperties.set(SYS_COMPACTION, enable ? "false" : "true");
+       String vulkanProp = SystemProperties.get(SYS_HW_VULKAN);
+       if (!vulkanProp.isEmpty() 
+           || (vulkanProp.toString().toLowerCase().contains("adreno"))) {
+         SystemProperties.set(SYS_HWUI, enable ? "skiavk" : "skiagl");
+       }
     }
 
     public static void cacheCleaner(PackageManager pm) {
@@ -137,6 +158,7 @@ public class ScarletIdleManager {
                 !RunningServices.get(i).pkgList[0].toString().toLowerCase().equals("android") &&
                 !RunningServices.get(i).pkgList[0].toString().toLowerCase().contains("launcher") &&
                 !RunningServices.get(i).pkgList[0].toString().toLowerCase().contains("ims") &&
+                RunningServices.get(i).pkgList[0].toString().toLowerCase().contains("gms") &&
                 RunningServices.get(i).pkgList[0].toString().toLowerCase().contains("google")) {
                     localActivityManager.killBackgroundProcesses(RunningServices.get(i).pkgList[0].toString());
             }
