@@ -292,6 +292,14 @@ public class SystemSensorManager extends SensorManager {
             return false;
         }
         if (Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.FULL_SENSOR_BLOCK, 0) == 1) {
+                String pkgName = mContext.getPackageName();
+                if (isBlockedApp(pkgName)) {
+                    Log.w(TAG, "Sensor access is denied for " + pkgName);
+                    return false;
+                }
+        }
+        if (Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.SENSOR_BLOCK, 0) == 1) {
             int sensortype = sensor.getType();
             if (sensortype == Sensor.TYPE_SIGNIFICANT_MOTION ||

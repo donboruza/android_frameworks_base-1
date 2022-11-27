@@ -6184,6 +6184,13 @@ public final class Settings {
         public static final String SENSOR_BLOCK = "sensor_block";
 
         /**
+         * Full Sensor block per-package
+         * @hide
+         */
+        @Readable
+        public static final String FULL_SENSOR_BLOCK = "full_sensor_block";
+
+        /**
          * Sensor blocked packages
          * @hide
          */
