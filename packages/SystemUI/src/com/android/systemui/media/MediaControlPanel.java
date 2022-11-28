@@ -695,7 +695,7 @@ public class MediaControlPanel {
                         		RenderEffect.createBlurEffect(
                             		mArtworkSettings.getBlurRadius(),
                             		mArtworkSettings.getBlurRadius(),
-                            	   Shader.TileMode.MIRROR
+                            	   Shader.TileMode.CLAMP
                         	)
                     	    );
                	 }
