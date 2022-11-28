@@ -40,6 +40,7 @@
     <string name="refresh_rate_forced_mode_placeholder"><xliff:g id="refresh_rate" example="60">%1$d</xliff:g> Hz</string>
 
   <string name="global_action_reboot_systemui">SystemUI</string>
+  <string name="global_action_reboot_soft">Soft Reboot</string>
 
     <!-- SystemUI tuner -->
     <string name="lockscreen_default">Default</string>

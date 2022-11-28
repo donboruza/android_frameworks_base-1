@@ -154,6 +154,7 @@ import com.android.systemui.util.settings.SecureSettings;
 import lineageos.app.LineageGlobalActions;
 import lineageos.providers.LineageSettings;
 
+import com.android.internal.util.rice.RiceUtils;
 import org.lineageos.internal.util.PowerMenuUtils;
 
 import java.util.ArrayList;
@@ -193,6 +194,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
     private static final String RESTART_ACTION_KEY_RESTART_DOWNLOAD = "restart_download";
     private static final String RESTART_ACTION_KEY_RESTART_FASTBOOT = "restart_fastboot";
     private static final String RESTART_ACTION_KEY_RESTART_SYSUI = "restart_sysui";
+    private static final String RESTART_ACTION_KEY_RESTART_SOFT = "restart_soft";
 
     // See NotificationManagerService#scheduleDurationReachedLocked
     private static final long TOAST_FADE_TIME = 333;
@@ -625,6 +627,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
         RestartDownloadAction dlAction = new RestartDownloadAction();
         RestartFastbootAction fbAction = new RestartFastbootAction();
         RestartSystemUIAction sysUIAction = new RestartSystemUIAction();
+        RestartSoftAction srAction = new RestartSoftAction();
         ArraySet<String> addedKeys = new ArraySet<>();
         ArraySet<String> addedRestartKeys = new ArraySet<String>();
         List<Action> tempActions = new ArrayList<>();
@@ -717,6 +720,8 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                 addIfShouldShowAction(mRestartItems, fbAction);
             } else if (RESTART_ACTION_KEY_RESTART_SYSUI.equals(actionKey)) {
                 addIfShouldShowAction(mRestartItems, sysUIAction);
+            } else if (RESTART_ACTION_KEY_RESTART_SOFT.equals(actionKey)) {
+                addIfShouldShowAction(mRestartItems, srAction);
             }
             // Add here so we don't add more than one.
             addedRestartKeys.add(actionKey);
@@ -1185,6 +1190,27 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
         }
     }
     
+    private final class RestartSoftAction extends SinglePressAction {
+        private RestartSoftAction() {
+            super(com.android.systemui.R.drawable.ic_restart_soft, com.android.systemui.R.string.global_action_reboot_soft);
+        }
+
+        @Override
+        public boolean showDuringKeyguard() {
+            return true;
+        }
+
+        @Override
+        public boolean showBeforeProvisioning() {
+            return true;
+        }
+
+        @Override
+        public void onPress() {
+            RiceUtils.restartAndroid(getContext());
+        }
+    }
+
     private final class RestartDownloadAction extends SinglePressAction {
         private RestartDownloadAction() {
             super(com.android.systemui.R.drawable.ic_lock_restart_bootloader,

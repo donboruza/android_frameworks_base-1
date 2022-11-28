@@ -114,7 +114,7 @@ public class RiceUtils {
         }
         return needsNav;
     }
-    
+
    public static void showSystemRestartDialog(Context context) {
         new AlertDialog.Builder(context)
                 .setTitle(R.string.system_restart_title)
