@@ -221,5 +221,6 @@
         <permission name="android.permission.SET_SYSTEM_AUDIO_CAPTION" />
         <permission name="android.permission.ACCESS_FINE_LOCATION" />
         <permission name="android.permission.MODIFY_AUDIO_SETTINGS" />
+        <permission name="android.permission.MANAGE_PARALLEL_SPACES" />
     </privapp-permissions>
 </permissions>
