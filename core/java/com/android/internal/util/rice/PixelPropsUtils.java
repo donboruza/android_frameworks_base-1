@@ -18,8 +18,10 @@
 package com.android.internal.util.rice;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Build;
 import android.os.SystemProperties;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.lang.reflect.Field;
@@ -193,8 +195,11 @@ public class PixelPropsUtils {
         propsToChangeMI11.put("MODEL", "M2102K1G");
     }
 
-    public static void setProps(String packageName) {
-        if (packageName == null || packageName.isEmpty()) {
+    public static void setProps(Context context) {
+        final String packageName = context.getPackageName();
+        final String processName = Application.getProcessName();
+
+        if (TextUtils.isEmpty(packageName) || processName == null) {
             return;
         }
         if (Arrays.asList(packagesToKeep).contains(packageName)) {
@@ -244,7 +249,6 @@ public class PixelPropsUtils {
                 setPropValue(key, value);
             }
             if (packageName.equals("com.google.android.gms")) {
-                final String processName = Application.getProcessName();
                 if (processName.equals("com.google.android.gms.unstable")) {
                     sIsGms = true;
                     setPropValue("FINGERPRINT", "google/angler/angler:6.0/MDB08L/2343525:user/release-keys");
