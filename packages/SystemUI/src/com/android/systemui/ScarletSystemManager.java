@@ -58,11 +58,7 @@ public class ScarletSystemManager {
     static final long INIT_TIME_NEEDED = 20000;
     static final String SYS_SYSTEM_BGT = "persist.sys.bgt.enable";
     static final String SYS_RENDER_BOOST_THREAD = "persist.sys.perf.topAppRenderThreadBoost.enable";
-    static final String SYS_CGROUP_FOLLOW = "persist.sys.cgroup_follow.enable";
-    static final String SYS_CGROUP_FOLLOW_DEX2OAT = "persist.sys.fw.cgroup_follow.dex2oat_only";
     static final String SYS_COMPACTION = "persist.sys.appcompact.enable_app_compact";
-    static final String SYS_HW_VULKAN = "ro.hardware.vulkan";
-    static final String SYS_HWUI = "persist.sys.hwui.renderer";
 
     public static void initializeSystemServices(Context mContext) {
         imContext = mContext;
@@ -99,14 +95,7 @@ public class ScarletSystemManager {
     public static void startBoostingService(boolean enable) {
        SystemProperties.set(SYS_RENDER_BOOST_THREAD, enable ? "true" : "false");
        SystemProperties.set(SYS_SYSTEM_BGT, enable ? "true" : "false");
-       SystemProperties.set(SYS_CGROUP_FOLLOW, enable ? "true" : "false");
-       SystemProperties.set(SYS_CGROUP_FOLLOW_DEX2OAT, enable ? "true" : "false");
        SystemProperties.set(SYS_COMPACTION, enable ? "false" : "true");
-       String vulkanProp = SystemProperties.get(SYS_HW_VULKAN);
-       if (!vulkanProp.isEmpty() 
-           || (vulkanProp.toString().toLowerCase().contains("adreno"))) {
-         SystemProperties.set(SYS_HWUI, enable ? "skiavk" : "skiagl");
-       }
     }
 
     public static void cacheCleaner(PackageManager pm) {
