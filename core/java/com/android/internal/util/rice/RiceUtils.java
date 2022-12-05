@@ -137,6 +137,7 @@ public class RiceUtils {
 
         public restartAndroidTask(Context context) {
             super();
+            mContext = context;
         }
 
         @Override
