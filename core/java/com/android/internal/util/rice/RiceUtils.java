@@ -62,7 +62,6 @@ import com.android.internal.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.ref.WeakReference;
 
 public class RiceUtils {
 
@@ -122,20 +121,21 @@ public class RiceUtils {
                 .setMessage(R.string.system_restart_message)
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        restartAndroid();
+                        restartAndroid(context);
                     }
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 
-    public static void restartAndroid() {
-        new restartAndroidTask().execute();
+    public static void restartAndroid(Context context) {
+        new restartAndroidTask(context).execute();
     }
 
     private static class restartAndroidTask extends AsyncTask<Void, Void, Void> {
+        private Context mContext;
 
-        public restartAndroidTask() {
+        public restartAndroidTask(Context context) {
             super();
         }
 
@@ -175,18 +175,18 @@ public class RiceUtils {
     }
 
     private static class restartSettingsTask extends AsyncTask<Void, Void, Void> {
-        private WeakReference<Context> mContext;
+        private Context mContext;
 
         public restartSettingsTask(Context context) {
             super();
-            mContext = new WeakReference<>(context);
+            mContext = context;
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             try {
                 ActivityManager am =
-                        (ActivityManager) mContext.get().getSystemService(Context.ACTIVITY_SERVICE);
+                        (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
                 IActivityManager ams = ActivityManager.getService();
                 for (ActivityManager.RunningAppProcessInfo app: am.getRunningAppProcesses()) {
                     if ("com.android.settings".equals(app.processName)) {
